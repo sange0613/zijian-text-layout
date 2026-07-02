@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:desktop": "tsc -b && vite build --mode desktop",
-    "package:win": "npm run build:desktop && electron-builder --win nsis portable --x64",
+    "package:win": "npm run build:desktop && electron-builder --win nsis portable --x64 --publish never",
     "test": "vitest",
     "test:desktop": "node --test electron/desktop-config.node.cjs"
   },

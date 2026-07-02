@@ -12,7 +12,7 @@ test('defines Windows installer and portable packaging', () => {
   assert.equal(packageJson.scripts['build:desktop'], 'tsc -b && vite build --mode desktop')
   assert.equal(
     packageJson.scripts['package:win'],
-    'npm run build:desktop && electron-builder --win nsis portable --x64',
+    'npm run build:desktop && electron-builder --win nsis portable --x64 --publish never',
   )
   assert.equal(packageJson.build.appId, 'com.zijian.textlayout')
   assert.deepEqual(packageJson.build.win.target, ['nsis', 'portable'])

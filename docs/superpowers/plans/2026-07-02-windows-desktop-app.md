@@ -35,7 +35,7 @@ assert.equal(packageJson.main, 'electron/main.cjs')
 assert.equal(packageJson.scripts['build:desktop'], 'tsc -b && vite build --mode desktop')
 assert.equal(
   packageJson.scripts['package:win'],
-  'npm run build:desktop && electron-builder --win nsis portable --x64',
+  'npm run build:desktop && electron-builder --win nsis portable --x64 --publish never',
 )
 assert.equal(packageJson.build.appId, 'com.zijian.textlayout')
 assert.deepEqual(packageJson.build.win.target, ['nsis', 'portable'])
@@ -124,7 +124,7 @@ Set package version `0.2.0`, `main: electron/main.cjs`, and scripts:
 
 ```json
 "build:desktop": "tsc -b && vite build --mode desktop",
-"package:win": "npm run build:desktop && electron-builder --win nsis portable --x64",
+"package:win": "npm run build:desktop && electron-builder --win nsis portable --x64 --publish never",
 "test:desktop": "node --test electron/desktop-config.node.cjs"
 ```
 
