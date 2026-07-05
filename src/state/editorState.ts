@@ -24,6 +24,8 @@ export const DEFAULT_EDITOR_STATE: EditorState = {
   },
   backgroundColor: '#FFFFFF',
   sizeId: 'redbook',
+  customWidth: 1080,
+  customHeight: 1080,
 }
 
 const HEX_COLOR = /^#[0-9a-fA-F]{6}$/
@@ -61,6 +63,15 @@ function isSignaturePosition(value: unknown): value is SignaturePosition {
   return typeof value === 'string' && SIGNATURE_POSITIONS.has(value)
 }
 
+function isCanvasDimension(value: unknown): value is number {
+  return (
+    typeof value === 'number' &&
+    Number.isFinite(value) &&
+    value >= 1 &&
+    value <= 10000
+  )
+}
+
 function isEditorState(value: unknown): value is EditorState {
   if (!value || typeof value !== 'object') return false
   const state = value as Record<string, unknown>
@@ -80,7 +91,9 @@ function isEditorState(value: unknown): value is EditorState {
     typeof state.backgroundColor === 'string' &&
     HEX_COLOR.test(state.backgroundColor) &&
     typeof state.sizeId === 'string' &&
-    SIZE_BY_ID.has(state.sizeId)
+    (SIZE_BY_ID.has(state.sizeId) || state.sizeId === 'custom') &&
+    isCanvasDimension(state.customWidth) &&
+    isCanvasDimension(state.customHeight)
   )
 }
 
@@ -122,6 +135,8 @@ export function parseStoredState(raw: string | null): EditorState {
                   ),
                 }
               : {}),
+            ...(!('customWidth' in value) ? { customWidth: 1080 } : {}),
+            ...(!('customHeight' in value) ? { customHeight: 1080 } : {}),
           }
         : value
     if (!isEditorState(candidate)) return DEFAULT_EDITOR_STATE
@@ -136,6 +151,8 @@ export function parseStoredState(raw: string | null): EditorState {
         fontSize: clamp(candidate.bodyStyle.fontSize, 12, 80),
       },
       signatureFontSize: clamp(candidate.signatureFontSize, 12, 64),
+      customWidth: Math.round(clamp(candidate.customWidth, 320, 4096)),
+      customHeight: Math.round(clamp(candidate.customHeight, 320, 4096)),
     }
   } catch {
     return DEFAULT_EDITOR_STATE

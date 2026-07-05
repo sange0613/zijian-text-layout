@@ -24,6 +24,8 @@ export type EditorState = {
   bodyStyle: TextStyle
   backgroundColor: string
   sizeId: string
+  customWidth: number
+  customHeight: number
 }
 
 export type SizePreset = {

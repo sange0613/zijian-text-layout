@@ -37,6 +37,32 @@ describe('parseStoredState', () => {
     expect(parseStoredState(JSON.stringify(saved))).toEqual(saved)
   })
 
+  it('adds default custom dimensions to legacy state', () => {
+    const legacy = { ...DEFAULT_EDITOR_STATE } as Record<string, unknown>
+    delete legacy.customWidth
+    delete legacy.customHeight
+
+    expect(parseStoredState(JSON.stringify(legacy))).toMatchObject({
+      customWidth: 1080,
+      customHeight: 1080,
+    })
+  })
+
+  it('restores and clamps custom canvas dimensions', () => {
+    const saved = {
+      ...DEFAULT_EDITOR_STATE,
+      sizeId: 'custom',
+      customWidth: 5000,
+      customHeight: 720,
+    }
+
+    expect(parseStoredState(JSON.stringify(saved))).toMatchObject({
+      sizeId: 'custom',
+      customWidth: 4096,
+      customHeight: 720,
+    })
+  })
+
   it('adds an empty signature to a valid legacy state', () => {
     const legacy = { ...DEFAULT_EDITOR_STATE } as Record<string, unknown>
     delete legacy.signature
