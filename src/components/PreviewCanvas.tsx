@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { FONT_BY_ID, SIZE_BY_ID } from '../data/presets'
+import { getCanvasSize } from '../canvas/getCanvasSize'
+import { FONT_BY_ID } from '../data/presets'
 import type { BackgroundImageValue, EditorState, SignaturePosition } from '../types'
 
 type PreviewCanvasProps = {
@@ -28,7 +29,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
 ) {
   const stageRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(0.4)
-  const size = SIZE_BY_ID.get(state.sizeId)!
+  const size = getCanvasSize(state)
   const titleFont = FONT_BY_ID.get(state.titleStyle.fontId)!
   const bodyFont = FONT_BY_ID.get(state.bodyStyle.fontId)!
   const signatureFont = FONT_BY_ID.get(state.signatureFontId)!

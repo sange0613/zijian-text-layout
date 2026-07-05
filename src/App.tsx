@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { EditorPanel } from './components/EditorPanel'
 import { ExportButton } from './components/ExportButton'
 import { PreviewCanvas } from './components/PreviewCanvas'
-import { SIZE_BY_ID } from './data/presets'
+import { getCanvasSize } from './canvas/getCanvasSize'
 import { exportPng } from './export/exportPng'
 import { usePersistedEditorState } from './hooks/usePersistedEditorState'
 import { useSessionBackgroundImage } from './hooks/useSessionBackgroundImage'
@@ -12,7 +12,7 @@ export default function App() {
   const { backgroundImage, setBackgroundImage } = useSessionBackgroundImage()
   const previewRef = useRef<HTMLDivElement>(null)
   const isEmpty = !state.title.trim() && !state.body.trim() && !state.signature.trim()
-  const size = SIZE_BY_ID.get(state.sizeId)!
+  const size = getCanvasSize(state)
 
   const handleExport = async () => {
     if (!previewRef.current) throw new Error('Preview canvas is unavailable')
