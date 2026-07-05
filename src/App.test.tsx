@@ -34,6 +34,23 @@ it('updates the preview text and size immediately', async () => {
   expect(screen.getByTestId('preview-canvas')).toHaveAttribute('data-size', '1080x1080')
 })
 
+it('applies a custom canvas size and can switch back to a preset', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.clear(screen.getByLabelText('自定义宽度'))
+  await user.type(screen.getByLabelText('自定义宽度'), '1600')
+  await user.clear(screen.getByLabelText('自定义高度'))
+  await user.type(screen.getByLabelText('自定义高度'), '900')
+  await user.click(screen.getByRole('button', { name: '应用自定义尺寸' }))
+
+  expect(screen.getByTestId('preview-canvas')).toHaveAttribute('data-size', '1600x900')
+  expect(screen.getByText('自定义 · 1600 × 900')).toBeInTheDocument()
+
+  await user.click(screen.getByRole('button', { name: /方图 1:1/ }))
+  expect(screen.getByTestId('preview-canvas')).toHaveAttribute('data-size', '1080x1080')
+})
+
 it('updates title typography independently', async () => {
   const user = userEvent.setup()
   render(<App />)

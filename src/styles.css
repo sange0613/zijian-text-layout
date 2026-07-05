@@ -373,6 +373,53 @@ button:focus-visible {
 .size-option[aria-pressed='true'] { background: #171717; border-color: #171717; color: #fff; }
 .size-option[aria-pressed='true'] span { color: #bcbcbc; }
 
+.custom-size-form {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 10px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.custom-size-label {
+  color: #626262;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.custom-size-form input[type='number'] {
+  min-width: 0;
+  height: 28px;
+  padding: 0 6px;
+  text-align: center;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.custom-size-times {
+  color: #8a8a8a;
+  text-align: center;
+  font-size: 11px;
+}
+
+.custom-size-form button {
+  height: 28px;
+  padding: 0;
+  border: 1px solid #d8d8d8;
+  border-radius: 7px;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.custom-size-form button:hover,
+.custom-size-form[data-active='true'] button {
+  border-color: #171717;
+  background: #171717;
+  color: #fff;
+}
+
 .signature-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 88px 82px;

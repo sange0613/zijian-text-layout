@@ -94,7 +94,15 @@ export function EditorPanel({
         value={state.bodyStyle}
         onChange={(bodyStyle) => onChange({ bodyStyle })}
       />
-      <SizePresets value={state.sizeId} onChange={(sizeId) => onChange({ sizeId })} />
+      <SizePresets
+        value={state.sizeId}
+        customWidth={state.customWidth}
+        customHeight={state.customHeight}
+        onChange={(sizeId) => onChange({ sizeId })}
+        onCustomSizeChange={(customWidth, customHeight) =>
+          onChange({ sizeId: 'custom', customWidth, customHeight })
+        }
+      />
       <section className="settings-section background-section" aria-label="画布背景">
         <div className="settings-heading">
           <span>画布背景</span>
