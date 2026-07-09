@@ -67,6 +67,27 @@ it('updates title typography independently', async () => {
   expect(screen.getByTestId('preview-body').getAttribute('style')).not.toContain('Smiley Sans')
 })
 
+it('applies a pure text layout preset and still allows manual size tweaks', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(screen.getByRole('button', { name: /标题压底/ }))
+
+  expect(screen.getByTestId('preview-canvas')).toHaveAttribute('data-layout', 'number-focus')
+  expect(screen.getByTestId('preview-title')).toHaveStyle({
+    fontSize: '96px',
+    fontWeight: '800',
+  })
+  expect(screen.getByTestId('preview-title').getAttribute('style')).toContain('Smiley Sans')
+
+  fireEvent.change(screen.getByRole('slider', { name: '标题字号' }), {
+    target: { value: '104' },
+  })
+
+  expect(screen.getByTestId('preview-title')).toHaveStyle({ fontSize: '104px' })
+  expect(screen.getByTestId('preview-canvas')).toHaveAttribute('data-layout', 'number-focus')
+})
+
 it('disables export when both text fields are empty', async () => {
   const user = userEvent.setup()
   render(<App />)

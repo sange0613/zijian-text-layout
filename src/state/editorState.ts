@@ -1,4 +1,5 @@
 import { FONT_BY_ID, SIZE_BY_ID } from '../data/presets'
+import { DEFAULT_TEXT_LAYOUT_ID, TEXT_LAYOUT_BY_ID } from '../data/textLayoutPresets'
 import type { EditorState, SignaturePosition, TextStyle } from '../types'
 
 export const STORAGE_KEY = 'zijian-editor-state-v1'
@@ -7,19 +8,20 @@ export const DEFAULT_EDITOR_STATE: EditorState = {
   title: '留一点空白，\n给生活呼吸',
   body: '好的排版让文字慢下来。标题负责建立节奏，正文留出足够的行间距，让每一句话都被看见。',
   signature: '',
+  textLayoutId: DEFAULT_TEXT_LAYOUT_ID,
   signaturePosition: 'bottom-left',
   signatureFontId: 'source-sans',
   signatureFontSize: 20,
   titleStyle: {
-    fontId: 'source-serif',
-    fontSize: 64,
-    fontWeight: 700,
+    fontId: 'smiley',
+    fontSize: 88,
+    fontWeight: 800,
     color: '#111111',
   },
   bodyStyle: {
     fontId: 'source-sans',
     fontSize: 28,
-    fontWeight: 400,
+    fontWeight: 500,
     color: '#4B4B4B',
   },
   backgroundColor: '#FFFFFF',
@@ -79,6 +81,8 @@ function isEditorState(value: unknown): value is EditorState {
     typeof state.title === 'string' &&
     typeof state.body === 'string' &&
     typeof state.signature === 'string' &&
+    typeof state.textLayoutId === 'string' &&
+    TEXT_LAYOUT_BY_ID.has(state.textLayoutId) &&
     isSignaturePosition(state.signaturePosition) &&
     typeof state.signatureFontId === 'string' &&
     FONT_BY_ID.has(state.signatureFontId) &&
@@ -117,6 +121,9 @@ export function parseStoredState(raw: string | null): EditorState {
         ? {
             ...value,
             ...(!('signature' in value) ? { signature: '' } : {}),
+            ...(!('textLayoutId' in value)
+              ? { textLayoutId: DEFAULT_TEXT_LAYOUT_ID }
+              : {}),
             ...(!('signaturePosition' in value)
               ? { signaturePosition: 'bottom-left' as const }
               : {}),

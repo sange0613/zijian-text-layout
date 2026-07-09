@@ -1,4 +1,5 @@
 import { FONT_PRESETS } from '../data/presets'
+import { createTextLayoutPatch } from '../data/textLayoutPresets'
 import type { BackgroundImageValue, EditorState } from '../types'
 import { BackgroundImageField } from './BackgroundImageField'
 import { BackgroundPositionControls } from './BackgroundPositionControls'
@@ -7,6 +8,7 @@ import { FontSizeSlider } from './FontSizeSlider'
 import { SignaturePositionPicker } from './SignaturePositionPicker'
 import { SizePresets } from './SizePresets'
 import { TextStyleControls } from './TextStyleControls'
+import { TextLayoutPresets } from './TextLayoutPresets'
 
 type EditorPanelProps = {
   state: EditorState
@@ -84,6 +86,10 @@ export function EditorPanel({
         </div>
       </fieldset>
 
+      <TextLayoutPresets
+        value={state.textLayoutId}
+        onChange={(textLayoutId) => onChange(createTextLayoutPatch(textLayoutId, state))}
+      />
       <TextStyleControls
         name="标题"
         value={state.titleStyle}

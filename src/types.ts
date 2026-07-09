@@ -17,6 +17,7 @@ export type EditorState = {
   title: string
   body: string
   signature: string
+  textLayoutId: string
   signaturePosition: SignaturePosition
   signatureFontId: string
   signatureFontSize: number
@@ -49,4 +50,12 @@ export type BackgroundImageValue = {
   name: string
   positionX: number
   positionY: number
+}
+
+export type TextLayoutPreset = {
+  id: string
+  label: string
+  rule: string
+  titleStyle: TextStyle
+  bodyStyle: TextStyle
 }

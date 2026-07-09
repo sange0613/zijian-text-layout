@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { FONT_PRESETS, SIZE_PRESETS } from '../data/presets'
+import { DEFAULT_TEXT_LAYOUT_ID } from '../data/textLayoutPresets'
 import { DEFAULT_EDITOR_STATE, parseStoredState } from './editorState'
 
 describe('editor presets', () => {
@@ -35,6 +36,21 @@ describe('parseStoredState', () => {
   it('restores a valid saved state', () => {
     const saved = { ...DEFAULT_EDITOR_STATE, title: '新的标题', sizeId: 'square' }
     expect(parseStoredState(JSON.stringify(saved))).toEqual(saved)
+  })
+
+  it('adds the default text layout to legacy state', () => {
+    const legacy = { ...DEFAULT_EDITOR_STATE } as Record<string, unknown>
+    delete legacy.textLayoutId
+
+    expect(parseStoredState(JSON.stringify(legacy))).toEqual({
+      ...legacy,
+      textLayoutId: DEFAULT_TEXT_LAYOUT_ID,
+    })
+  })
+
+  it('rejects an unknown text layout', () => {
+    const saved = { ...DEFAULT_EDITOR_STATE, textLayoutId: 'unknown-layout' }
+    expect(parseStoredState(JSON.stringify(saved))).toEqual(DEFAULT_EDITOR_STATE)
   })
 
   it('adds default custom dimensions to legacy state', () => {

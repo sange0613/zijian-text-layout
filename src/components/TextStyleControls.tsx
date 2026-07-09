@@ -40,6 +40,7 @@ export function TextStyleControls({ name, value, onChange }: TextStyleControlsPr
             <option value="400">常规</option>
             <option value="600">中粗</option>
             <option value="700">粗体</option>
+            <option value="800">特粗</option>
           </select>
         </label>
       </div>

@@ -60,6 +60,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
           data-testid="preview-canvas"
           data-export-canvas="true"
           data-size={`${size.width}x${size.height}`}
+          data-layout={state.textLayoutId}
           style={{
             width: size.width,
             height: size.height,
@@ -79,7 +80,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
               aria-hidden="true"
             />
           ) : null}
-          <div className="preview-content">
+          <div className={`preview-content preview-content--${state.textLayoutId}`}>
             {state.title ? (
               <h2
                 data-testid="preview-title"
