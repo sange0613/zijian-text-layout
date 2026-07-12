@@ -35,6 +35,8 @@ export const SIZE_PRESETS: SizePreset[] = [
   { id: 'redbook', label: '小红书 3:4', detail: '1242 × 1656', width: 1242, height: 1656 },
   { id: 'square', label: '方图 1:1', detail: '1080 × 1080', width: 1080, height: 1080 },
   { id: 'wechat', label: '公众号首图', detail: '900 × 383', width: 900, height: 383 },
+  { id: 'mini-program-vertical', label: '小程序竖图', detail: '750 × 1000', width: 750, height: 1000 },
+  { id: 'wechat-vertical', label: '公众号竖图', detail: '900 × 1200', width: 900, height: 1200 },
   { id: 'story', label: '手机竖版', detail: '1080 × 1920', width: 1080, height: 1920 },
   { id: 'landscape', label: '横版 16:9', detail: '1920 × 1080', width: 1920, height: 1080 },
 ]

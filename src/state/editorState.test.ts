@@ -13,11 +13,13 @@ describe('editor presets', () => {
     ])
   })
 
-  it('contains the five approved canvas sizes', () => {
+  it('contains the approved canvas sizes including mini program and official account vertical presets', () => {
     expect(SIZE_PRESETS.map(({ width, height }) => [width, height])).toEqual([
       [1242, 1656],
       [1080, 1080],
       [900, 383],
+      [750, 1000],
+      [900, 1200],
       [1080, 1920],
       [1920, 1080],
     ])
