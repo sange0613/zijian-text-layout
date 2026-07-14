@@ -17,6 +17,8 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       fontWeight: 500,
       color: '#4B4B4B',
     },
+    titlePosition: { x: 50, y: 43 },
+    bodyPosition: { x: 50, y: 59 },
   },
   {
     id: 'guide-list',
@@ -34,6 +36,8 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       fontWeight: 500,
       color: '#4B4B4B',
     },
+    titlePosition: { x: 30, y: 28 },
+    bodyPosition: { x: 32, y: 55 },
   },
   {
     id: 'top-bottom',
@@ -51,6 +55,8 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       fontWeight: 400,
       color: '#4B4B4B',
     },
+    titlePosition: { x: 33, y: 22 },
+    bodyPosition: { x: 34, y: 76 },
   },
   {
     id: 'center-quote',
@@ -68,6 +74,8 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       fontWeight: 400,
       color: '#4B4B4B',
     },
+    titlePosition: { x: 50, y: 46 },
+    bodyPosition: { x: 50, y: 62 },
   },
   {
     id: 'magazine-left',
@@ -85,6 +93,8 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       fontWeight: 400,
       color: '#4B4B4B',
     },
+    titlePosition: { x: 28, y: 43 },
+    bodyPosition: { x: 28, y: 64 },
   },
   {
     id: 'number-focus',
@@ -102,6 +112,84 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       fontWeight: 600,
       color: '#4B4B4B',
     },
+    titlePosition: { x: 34, y: 73 },
+    bodyPosition: { x: 35, y: 88 },
+  },
+  {
+    id: 'top-left-note',
+    label: '左上笔记感',
+    rule: '像手帐开头，适合生活记录',
+    titleStyle: {
+      fontId: 'source-serif',
+      fontSize: 58,
+      fontWeight: 700,
+      color: '#151515',
+    },
+    bodyStyle: {
+      fontId: 'source-sans',
+      fontSize: 25,
+      fontWeight: 400,
+      color: '#4B4B4B',
+    },
+    titlePosition: { x: 28, y: 25 },
+    bodyPosition: { x: 30, y: 43 },
+  },
+  {
+    id: 'right-column',
+    label: '右侧竖栏感',
+    rule: '右侧集中，左边留白',
+    titleStyle: {
+      fontId: 'huiwen-mincho',
+      fontSize: 58,
+      fontWeight: 700,
+      color: '#151515',
+    },
+    bodyStyle: {
+      fontId: 'source-sans',
+      fontSize: 24,
+      fontWeight: 400,
+      color: '#4B4B4B',
+    },
+    titlePosition: { x: 70, y: 37 },
+    bodyPosition: { x: 69, y: 58 },
+  },
+  {
+    id: 'split-diagonal',
+    label: '错位呼吸感',
+    rule: '标题正文错开，更有层次',
+    titleStyle: {
+      fontId: 'smiley',
+      fontSize: 78,
+      fontWeight: 800,
+      color: '#151515',
+    },
+    bodyStyle: {
+      fontId: 'source-serif',
+      fontSize: 26,
+      fontWeight: 400,
+      color: '#4B4B4B',
+    },
+    titlePosition: { x: 35, y: 35 },
+    bodyPosition: { x: 64, y: 63 },
+  },
+  {
+    id: 'bottom-center',
+    label: '底部居中',
+    rule: '上方留白，适合安静封面',
+    titleStyle: {
+      fontId: 'source-serif',
+      fontSize: 68,
+      fontWeight: 700,
+      color: '#151515',
+    },
+    bodyStyle: {
+      fontId: 'source-sans',
+      fontSize: 25,
+      fontWeight: 400,
+      color: '#4B4B4B',
+    },
+    titlePosition: { x: 50, y: 70 },
+    bodyPosition: { x: 50, y: 84 },
   },
 ]
 
@@ -126,5 +214,7 @@ export function createTextLayoutPatch(
       ...preset.bodyStyle,
       color: current?.bodyStyle.color ?? preset.bodyStyle.color,
     },
+    titlePosition: preset.titlePosition,
+    bodyPosition: preset.bodyPosition,
   }
 }

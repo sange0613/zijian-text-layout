@@ -5,6 +5,11 @@ export type TextStyle = {
   color: string
 }
 
+export type TextBlockPosition = {
+  x: number
+  y: number
+}
+
 export type SignaturePosition =
   | 'top-left'
   | 'top-center'
@@ -23,6 +28,8 @@ export type EditorState = {
   signatureFontSize: number
   titleStyle: TextStyle
   bodyStyle: TextStyle
+  titlePosition: TextBlockPosition
+  bodyPosition: TextBlockPosition
   backgroundColor: string
   sizeId: string
   customWidth: number
@@ -58,4 +65,6 @@ export type TextLayoutPreset = {
   rule: string
   titleStyle: TextStyle
   bodyStyle: TextStyle
+  titlePosition: TextBlockPosition
+  bodyPosition: TextBlockPosition
 }

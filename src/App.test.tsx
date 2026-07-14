@@ -88,6 +88,32 @@ it('applies a pure text layout preset and still allows manual size tweaks', asyn
   expect(screen.getByTestId('preview-canvas')).toHaveAttribute('data-layout', 'number-focus')
 })
 
+it('moves the title and body independently with position sliders', () => {
+  render(<App />)
+
+  fireEvent.change(screen.getByRole('slider', { name: '标题左右位置' }), {
+    target: { value: '24' },
+  })
+  fireEvent.change(screen.getByRole('slider', { name: '标题上下位置' }), {
+    target: { value: '32' },
+  })
+  fireEvent.change(screen.getByRole('slider', { name: '正文左右位置' }), {
+    target: { value: '72' },
+  })
+  fireEvent.change(screen.getByRole('slider', { name: '正文上下位置' }), {
+    target: { value: '78' },
+  })
+
+  expect(screen.getByTestId('preview-title')).toHaveStyle({
+    left: '24%',
+    top: '32%',
+  })
+  expect(screen.getByTestId('preview-body')).toHaveStyle({
+    left: '72%',
+    top: '78%',
+  })
+})
+
 it('disables export when both text fields are empty', async () => {
   const user = userEvent.setup()
   render(<App />)

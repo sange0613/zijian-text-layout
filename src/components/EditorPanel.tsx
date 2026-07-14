@@ -9,6 +9,7 @@ import { SignaturePositionPicker } from './SignaturePositionPicker'
 import { SizePresets } from './SizePresets'
 import { TextStyleControls } from './TextStyleControls'
 import { TextLayoutPresets } from './TextLayoutPresets'
+import { TextPositionControls } from './TextPositionControls'
 
 type EditorPanelProps = {
   state: EditorState
@@ -89,6 +90,12 @@ export function EditorPanel({
       <TextLayoutPresets
         value={state.textLayoutId}
         onChange={(textLayoutId) => onChange(createTextLayoutPatch(textLayoutId, state))}
+      />
+      <TextPositionControls
+        titlePosition={state.titlePosition}
+        bodyPosition={state.bodyPosition}
+        onTitleChange={(titlePosition) => onChange({ titlePosition })}
+        onBodyChange={(bodyPosition) => onChange({ bodyPosition })}
       />
       <TextStyleControls
         name="标题"

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { FONT_PRESETS, SIZE_PRESETS } from '../data/presets'
-import { DEFAULT_TEXT_LAYOUT_ID } from '../data/textLayoutPresets'
+import { DEFAULT_TEXT_LAYOUT_ID, TEXT_LAYOUT_PRESETS } from '../data/textLayoutPresets'
 import { DEFAULT_EDITOR_STATE, parseStoredState } from './editorState'
 
 describe('editor presets', () => {
@@ -23,6 +23,35 @@ describe('editor presets', () => {
       [1080, 1920],
       [1920, 1080],
     ])
+  })
+
+  it('contains ten pure text layout presets with title and body positions', () => {
+    expect(TEXT_LAYOUT_PRESETS).toHaveLength(10)
+    expect(TEXT_LAYOUT_PRESETS.map((preset) => preset.label)).toEqual([
+      '大标题居中',
+      '干货清单',
+      '上下分区',
+      '居中金句',
+      '左侧杂志感',
+      '标题压底',
+      '左上笔记感',
+      '右侧竖栏感',
+      '错位呼吸感',
+      '底部居中',
+    ])
+    expect(
+      TEXT_LAYOUT_PRESETS.every(
+        (preset) =>
+          preset.titlePosition.x >= 0 &&
+          preset.titlePosition.x <= 100 &&
+          preset.titlePosition.y >= 0 &&
+          preset.titlePosition.y <= 100 &&
+          preset.bodyPosition.x >= 0 &&
+          preset.bodyPosition.x <= 100 &&
+          preset.bodyPosition.y >= 0 &&
+          preset.bodyPosition.y <= 100,
+      ),
+    ).toBe(true)
   })
 })
 
@@ -47,6 +76,17 @@ describe('parseStoredState', () => {
     expect(parseStoredState(JSON.stringify(legacy))).toEqual({
       ...legacy,
       textLayoutId: DEFAULT_TEXT_LAYOUT_ID,
+    })
+  })
+
+  it('adds default text positions to legacy state', () => {
+    const legacy = { ...DEFAULT_EDITOR_STATE } as Record<string, unknown>
+    delete legacy.titlePosition
+    delete legacy.bodyPosition
+
+    expect(parseStoredState(JSON.stringify(legacy))).toMatchObject({
+      titlePosition: DEFAULT_EDITOR_STATE.titlePosition,
+      bodyPosition: DEFAULT_EDITOR_STATE.bodyPosition,
     })
   })
 

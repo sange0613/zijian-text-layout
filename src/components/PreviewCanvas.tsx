@@ -85,6 +85,8 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
               <h2
                 data-testid="preview-title"
                 style={{
+                  left: `${state.titlePosition.x}%`,
+                  top: `${state.titlePosition.y}%`,
                   color: state.titleStyle.color,
                   fontFamily: `'${titleFont.family}', ${titleFont.fallback}`,
                   fontSize: state.titleStyle.fontSize,
@@ -98,6 +100,8 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
               <p
                 data-testid="preview-body"
                 style={{
+                  left: `${state.bodyPosition.x}%`,
+                  top: `${state.bodyPosition.y}%`,
                   color: state.bodyStyle.color,
                   fontFamily: `'${bodyFont.family}', ${bodyFont.fallback}`,
                   fontSize: state.bodyStyle.fontSize,

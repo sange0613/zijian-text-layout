@@ -1,6 +1,6 @@
 import { FONT_BY_ID, SIZE_BY_ID } from '../data/presets'
 import { DEFAULT_TEXT_LAYOUT_ID, TEXT_LAYOUT_BY_ID } from '../data/textLayoutPresets'
-import type { EditorState, SignaturePosition, TextStyle } from '../types'
+import type { EditorState, SignaturePosition, TextBlockPosition, TextStyle } from '../types'
 
 export const STORAGE_KEY = 'zijian-editor-state-v1'
 
@@ -24,6 +24,8 @@ export const DEFAULT_EDITOR_STATE: EditorState = {
     fontWeight: 500,
     color: '#4B4B4B',
   },
+  titlePosition: { x: 50, y: 43 },
+  bodyPosition: { x: 50, y: 59 },
   backgroundColor: '#FFFFFF',
   sizeId: 'redbook',
   customWidth: 1080,
@@ -65,6 +67,21 @@ function isSignaturePosition(value: unknown): value is SignaturePosition {
   return typeof value === 'string' && SIGNATURE_POSITIONS.has(value)
 }
 
+function isTextBlockPosition(value: unknown): value is TextBlockPosition {
+  if (!value || typeof value !== 'object') return false
+  const position = value as Record<string, unknown>
+  return (
+    typeof position.x === 'number' &&
+    Number.isFinite(position.x) &&
+    position.x >= 0 &&
+    position.x <= 100 &&
+    typeof position.y === 'number' &&
+    Number.isFinite(position.y) &&
+    position.y >= 0 &&
+    position.y <= 100
+  )
+}
+
 function isCanvasDimension(value: unknown): value is number {
   return (
     typeof value === 'number' &&
@@ -92,6 +109,8 @@ function isEditorState(value: unknown): value is EditorState {
     state.signatureFontSize <= 240 &&
     isTextStyle(state.titleStyle) &&
     isTextStyle(state.bodyStyle) &&
+    isTextBlockPosition(state.titlePosition) &&
+    isTextBlockPosition(state.bodyPosition) &&
     typeof state.backgroundColor === 'string' &&
     HEX_COLOR.test(state.backgroundColor) &&
     typeof state.sizeId === 'string' &&
@@ -142,6 +161,12 @@ export function parseStoredState(raw: string | null): EditorState {
                   ),
                 }
               : {}),
+            ...(!('titlePosition' in value)
+              ? { titlePosition: DEFAULT_EDITOR_STATE.titlePosition }
+              : {}),
+            ...(!('bodyPosition' in value)
+              ? { bodyPosition: DEFAULT_EDITOR_STATE.bodyPosition }
+              : {}),
             ...(!('customWidth' in value) ? { customWidth: 1080 } : {}),
             ...(!('customHeight' in value) ? { customHeight: 1080 } : {}),
           }
@@ -156,6 +181,14 @@ export function parseStoredState(raw: string | null): EditorState {
       bodyStyle: {
         ...candidate.bodyStyle,
         fontSize: clamp(candidate.bodyStyle.fontSize, 12, 80),
+      },
+      titlePosition: {
+        x: clamp(candidate.titlePosition.x, 0, 100),
+        y: clamp(candidate.titlePosition.y, 0, 100),
+      },
+      bodyPosition: {
+        x: clamp(candidate.bodyPosition.x, 0, 100),
+        y: clamp(candidate.bodyPosition.y, 0, 100),
       },
       signatureFontSize: clamp(candidate.signatureFontSize, 12, 64),
       customWidth: Math.round(clamp(candidate.customWidth, 320, 4096)),
