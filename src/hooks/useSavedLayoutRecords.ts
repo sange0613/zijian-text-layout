@@ -12,11 +12,21 @@ export function useSavedLayoutRecords() {
     parseSavedLayoutRecords(localStorage.getItem(SAVED_LAYOUT_RECORDS_KEY)),
   )
 
-  const save = useCallback((state: EditorState) => {
+  const save = useCallback((state: EditorState, name = '') => {
     setRecords((current) => {
-      const next = [createSavedLayoutRecord(state), ...current].slice(
+      const next = [createSavedLayoutRecord(state, name), ...current].slice(
         0,
         MAX_SAVED_LAYOUT_RECORDS,
+      )
+      localStorage.setItem(SAVED_LAYOUT_RECORDS_KEY, JSON.stringify(next))
+      return next
+    })
+  }, [])
+
+  const rename = useCallback((id: string, name: string) => {
+    setRecords((current) => {
+      const next = current.map((record) =>
+        record.id === id ? { ...record, name } : record,
       )
       localStorage.setItem(SAVED_LAYOUT_RECORDS_KEY, JSON.stringify(next))
       return next
@@ -31,5 +41,5 @@ export function useSavedLayoutRecords() {
     })
   }, [])
 
-  return { records, save, remove }
+  return { records, save, rename, remove }
 }

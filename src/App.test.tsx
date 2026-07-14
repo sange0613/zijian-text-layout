@@ -118,6 +118,7 @@ it('saves the current text and layout as a reusable local record', async () => {
   const user = userEvent.setup()
   render(<App />)
 
+  await user.type(screen.getByLabelText('保存记录名称'), '我的收藏模板')
   await user.clear(screen.getByLabelText('标题内容'))
   await user.type(screen.getByLabelText('标题内容'), '我的常用排版')
   await user.click(screen.getByRole('button', { name: /标题压底/ }))
@@ -136,7 +137,7 @@ it('saves the current text and layout as a reusable local record', async () => {
   await user.click(screen.getByRole('button', { name: /大标题居中/ }))
 
   await user.click(
-    screen.getByRole('button', { name: '使用记录：我的常用排版' }),
+    screen.getByRole('button', { name: '使用记录：我的收藏模板' }),
   )
 
   expect(screen.getByLabelText('标题内容')).toHaveValue('我的常用排版')
@@ -148,6 +149,31 @@ it('saves the current text and layout as a reusable local record', async () => {
     fontSize: '104px',
     left: '24%',
   })
+})
+
+it('renames saved records and exports them as a JSON file', async () => {
+  const user = userEvent.setup()
+  const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+  render(<App />)
+
+  await user.type(screen.getByLabelText('保存记录名称'), '旧名字')
+  await user.click(screen.getByRole('button', { name: '保存当前记录' }))
+
+  const nameInput = screen.getByLabelText('记录名称：旧名字')
+  await user.clear(nameInput)
+  await user.type(nameInput, '小红书封面模板')
+  await user.tab()
+
+  expect(screen.getByLabelText('记录名称：小红书封面模板')).toBeInTheDocument()
+  await user.click(screen.getByRole('button', { name: '导出记录' }))
+
+  expect(URL.createObjectURL).toHaveBeenCalledWith(
+    expect.objectContaining({ type: 'application/json;charset=utf-8' }),
+  )
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:records')
+  expect(click).toHaveBeenCalled()
+
+  click.mockRestore()
 })
 
 it('keeps saved layout records after the app is reopened and allows deletion', async () => {

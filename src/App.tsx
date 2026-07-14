@@ -4,6 +4,7 @@ import { ExportButton } from './components/ExportButton'
 import { PreviewCanvas } from './components/PreviewCanvas'
 import { getCanvasSize } from './canvas/getCanvasSize'
 import { exportPng } from './export/exportPng'
+import { exportSavedLayoutRecords } from './export/exportSavedLayoutRecords'
 import { usePersistedEditorState } from './hooks/usePersistedEditorState'
 import { useSessionBackgroundImage } from './hooks/useSessionBackgroundImage'
 import { useSavedLayoutRecords } from './hooks/useSavedLayoutRecords'
@@ -11,7 +12,8 @@ import { useSavedLayoutRecords } from './hooks/useSavedLayoutRecords'
 export default function App() {
   const { state, update } = usePersistedEditorState()
   const { backgroundImage, setBackgroundImage } = useSessionBackgroundImage()
-  const { records, save, remove } = useSavedLayoutRecords()
+  const { records, save, rename, remove } = useSavedLayoutRecords()
+  const [recordName, setRecordName] = useState('')
   const [justSaved, setJustSaved] = useState(false)
   const previewRef = useRef<HTMLDivElement>(null)
   const isEmpty = !state.title.trim() && !state.body.trim() && !state.signature.trim()
@@ -27,7 +29,8 @@ export default function App() {
   }
 
   const handleSaveRecord = () => {
-    save(state)
+    save(state, recordName)
+    setRecordName('')
     setJustSaved(true)
   }
 
@@ -42,10 +45,14 @@ export default function App() {
           state={state}
           backgroundImage={backgroundImage}
           savedRecords={records}
+          recordName={recordName}
           justSaved={justSaved}
           onChange={update}
           onBackgroundImageChange={setBackgroundImage}
+          onRecordNameChange={setRecordName}
           onSaveRecord={handleSaveRecord}
+          onExportRecords={() => exportSavedLayoutRecords(records)}
+          onRenameRecord={rename}
           onApplyRecord={(savedState) => {
             update(savedState)
             setJustSaved(false)

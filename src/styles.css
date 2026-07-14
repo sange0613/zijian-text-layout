@@ -125,8 +125,23 @@ button { color: inherit; }
   font-size: 11px;
 }
 
+.saved-record-save-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 58px;
+  gap: 6px;
+  margin-top: 7px;
+}
+
+.saved-record-name-field {
+  display: grid;
+  gap: 3px;
+  color: #777;
+  font-size: 10px;
+}
+
 .save-record-button {
-  height: 30px;
+  align-self: end;
+  height: 32px;
   padding: 0 11px;
   border: 1px solid var(--ink);
   border-radius: 7px;
@@ -139,10 +154,25 @@ button { color: inherit; }
 
 .save-record-button:hover { background: #333; }
 
+.export-records-button {
+  height: 26px;
+  padding: 0 9px;
+  border: 1px solid #dedede;
+  border-radius: 7px;
+  background: #fafafa;
+  color: #555;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.export-records-button:hover:not(:disabled) { border-color: #aaa; background: #fff; }
+.export-records-button:disabled { opacity: .45; cursor: not-allowed; }
+
 .save-record-status {
   position: absolute;
-  top: 13px;
-  right: 116px;
+  top: 48px;
+  right: 69px;
   color: #36734a;
   font-size: 11px;
 }
@@ -160,8 +190,42 @@ button { color: inherit; }
 
 .saved-record-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 28px;
+  grid-template-columns: minmax(0, 1fr) 34px 28px;
   gap: 4px;
+}
+
+.saved-record-main {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 7px;
+  border: 1px solid #dedede;
+  border-radius: 7px;
+  background: #fafafa;
+}
+
+.saved-record-main input {
+  height: 24px;
+  min-width: 0;
+  padding: 0 5px;
+  border-color: transparent;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.saved-record-main input:focus-visible {
+  border-color: #c9c9c9;
+  background: #fff;
+  box-shadow: none;
+}
+
+.saved-record-main span {
+  color: #8a8a8a;
+  font-size: 10px;
 }
 
 .saved-record-apply,
@@ -173,27 +237,11 @@ button { color: inherit; }
 }
 
 .saved-record-apply {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  width: 34px;
   height: 34px;
-  padding: 0 9px;
-  text-align: left;
-}
-
-.saved-record-apply strong {
-  overflow: hidden;
+  padding: 0;
   font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.saved-record-apply span {
-  flex: none;
-  color: #8a8a8a;
-  font-size: 10px;
+  font-weight: 700;
 }
 
 .saved-record-apply:hover,

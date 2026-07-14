@@ -16,10 +16,14 @@ type EditorPanelProps = {
   state: EditorState
   backgroundImage: BackgroundImageValue | null
   savedRecords: SavedLayoutRecord[]
+  recordName: string
   justSaved: boolean
   onChange: (patch: Partial<EditorState>) => void
   onBackgroundImageChange: (value: BackgroundImageValue | null) => void
+  onRecordNameChange: (name: string) => void
   onSaveRecord: () => void
+  onExportRecords: () => void
+  onRenameRecord: (id: string, name: string) => void
   onApplyRecord: (state: EditorState) => void
   onRemoveRecord: (id: string) => void
 }
@@ -28,10 +32,14 @@ export function EditorPanel({
   state,
   backgroundImage,
   savedRecords,
+  recordName,
   justSaved,
   onChange,
   onBackgroundImageChange,
+  onRecordNameChange,
   onSaveRecord,
+  onExportRecords,
+  onRenameRecord,
   onApplyRecord,
   onRemoveRecord,
 }: EditorPanelProps) {
@@ -100,8 +108,12 @@ export function EditorPanel({
 
       <SavedLayoutRecords
         records={savedRecords}
+        recordName={recordName}
         justSaved={justSaved}
+        onRecordNameChange={onRecordNameChange}
         onSave={onSaveRecord}
+        onExport={onExportRecords}
+        onRename={onRenameRecord}
         onApply={onApplyRecord}
         onRemove={onRemoveRecord}
       />

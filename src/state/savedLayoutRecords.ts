@@ -3,6 +3,7 @@ import type { EditorState, SavedLayoutRecord } from '../types'
 
 export const SAVED_LAYOUT_RECORDS_KEY = 'zijian-saved-layout-records-v1'
 export const MAX_SAVED_LAYOUT_RECORDS = 20
+export const DEFAULT_SAVED_LAYOUT_RECORD_NAME = '未命名记录'
 
 function isRecordShape(value: unknown): value is SavedLayoutRecord {
   if (!value || typeof value !== 'object') return false
@@ -37,14 +38,21 @@ export function parseSavedLayoutRecords(raw: string | null): SavedLayoutRecord[]
 function getRecordName(state: EditorState) {
   const titleLine = state.title.split('\n').find((line) => line.trim())?.trim()
   const bodyLine = state.body.split('\n').find((line) => line.trim())?.trim()
-  return (titleLine || bodyLine || state.signature.trim() || '未命名记录').slice(0, 24)
+  return normalizeRecordName(titleLine || bodyLine || state.signature)
 }
 
-export function createSavedLayoutRecord(state: EditorState): SavedLayoutRecord {
+export function normalizeRecordName(name: string) {
+  return (name.trim() || DEFAULT_SAVED_LAYOUT_RECORD_NAME).slice(0, 24)
+}
+
+export function createSavedLayoutRecord(
+  state: EditorState,
+  customName = '',
+): SavedLayoutRecord {
   const savedAt = Date.now()
   return {
     id: `${savedAt}-${Math.random().toString(36).slice(2, 8)}`,
-    name: getRecordName(state),
+    name: customName.trim() ? normalizeRecordName(customName) : getRecordName(state),
     savedAt,
     state: JSON.parse(JSON.stringify(state)) as EditorState,
   }
