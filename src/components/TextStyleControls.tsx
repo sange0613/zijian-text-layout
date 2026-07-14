@@ -1,5 +1,5 @@
 import { FONT_PRESETS } from '../data/presets'
-import type { TextStyle } from '../types'
+import type { TextBlockPosition, TextStyle } from '../types'
 import { ColorField } from './ColorField'
 import { FontSizeSlider } from './FontSizeSlider'
 
@@ -7,9 +7,43 @@ type TextStyleControlsProps = {
   name: '标题' | '正文'
   value: TextStyle
   onChange: (value: TextStyle) => void
+  position: TextBlockPosition
+  onPositionChange: (value: TextBlockPosition) => void
 }
 
-export function TextStyleControls({ name, value, onChange }: TextStyleControlsProps) {
+function PositionSlider({
+  label,
+  value,
+  onChange,
+}: {
+  label: string
+  value: number
+  onChange: (value: number) => void
+}) {
+  return (
+    <label className="position-slider">
+      <span>{label}</span>
+      <input
+        aria-label={label}
+        type="range"
+        min={0}
+        max={100}
+        value={value}
+        style={{ '--range-progress': `${value}%` } as React.CSSProperties}
+        onChange={(event) => onChange(Number(event.target.value))}
+      />
+      <output>{value}%</output>
+    </label>
+  )
+}
+
+export function TextStyleControls({
+  name,
+  value,
+  onChange,
+  position,
+  onPositionChange,
+}: TextStyleControlsProps) {
   const update = (patch: Partial<TextStyle>) => onChange({ ...value, ...patch })
 
   return (
@@ -52,6 +86,19 @@ export function TextStyleControls({ name, value, onChange }: TextStyleControlsPr
         onChange={(fontSize) => update({ fontSize })}
       />
       <ColorField label={`${name}颜色`} value={value.color} onChange={(color) => update({ color })} />
+      <div className="text-position-group text-position-group--inline">
+        <span className="position-group-title">位置</span>
+        <PositionSlider
+          label={`${name}左右位置`}
+          value={position.x}
+          onChange={(x) => onPositionChange({ ...position, x })}
+        />
+        <PositionSlider
+          label={`${name}上下位置`}
+          value={position.y}
+          onChange={(y) => onPositionChange({ ...position, y })}
+        />
+      </div>
     </fieldset>
   )
 }

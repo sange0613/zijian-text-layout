@@ -16,8 +16,27 @@ it('renders the simple editor workspace', () => {
   render(<App />)
   expect(screen.getByRole('heading', { name: '字间' })).toBeInTheDocument()
   expect(screen.getByRole('main')).toBeInTheDocument()
+  expect(screen.getByRole('complementary', { name: '文字编辑' })).toBeInTheDocument()
+  expect(screen.getByLabelText('排版预览')).toBeInTheDocument()
+  expect(screen.getByRole('complementary', { name: '样式设置' })).toBeInTheDocument()
   expect(screen.getByRole('button', { name: '下载 PNG' })).toBeInTheDocument()
   expect(screen.getAllByRole('option', { name: /思源|得意|汇文/ })).toHaveLength(12)
+})
+
+it('groups title and body style with their own position controls', () => {
+  render(<App />)
+
+  const titleSettings = screen.getByRole('group', { name: '标题样式' })
+  const bodySettings = screen.getByRole('group', { name: '正文样式' })
+
+  expect(titleSettings).toContainElement(screen.getByLabelText('标题字体'))
+  expect(titleSettings).toContainElement(screen.getByLabelText('标题字号'))
+  expect(titleSettings).toContainElement(screen.getByLabelText('标题左右位置'))
+  expect(titleSettings).toContainElement(screen.getByLabelText('标题上下位置'))
+  expect(bodySettings).toContainElement(screen.getByLabelText('正文字体'))
+  expect(bodySettings).toContainElement(screen.getByLabelText('正文字号'))
+  expect(bodySettings).toContainElement(screen.getByLabelText('正文左右位置'))
+  expect(bodySettings).toContainElement(screen.getByLabelText('正文上下位置'))
 })
 
 it('updates the preview text and size immediately', async () => {
