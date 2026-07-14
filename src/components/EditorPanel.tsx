@@ -90,10 +90,10 @@ export function EditorPanel({
           <div className="signature-row">
             <label className="field-control signature-field">
               <span>署名文字</span>
-              <input
+              <textarea
                 aria-label="署名文字"
                 className="signature-input"
-                type="text"
+                rows={2}
                 placeholder="例如：摄影 / 林野"
                 value={state.signature}
                 onChange={(event) => onChange({ signature: event.target.value })}
@@ -128,6 +128,33 @@ export function EditorPanel({
             />
           </div>
         </fieldset>
+        <section className="settings-section background-section" aria-label="画布背景">
+          <div className="settings-heading">
+            <span>画布背景</span>
+            <BackgroundImageField
+              value={backgroundImage}
+              onChange={onBackgroundImageChange}
+            />
+          </div>
+          {backgroundImage ? (
+            <BackgroundPositionControls
+              positionX={backgroundImage.positionX}
+              positionY={backgroundImage.positionY}
+              onChange={(positionX, positionY) =>
+                onBackgroundImageChange({
+                  ...backgroundImage,
+                  positionX,
+                  positionY,
+                })
+              }
+            />
+          ) : null}
+          <ColorField
+            label="背景颜色"
+            value={state.backgroundColor}
+            onChange={(backgroundColor) => onChange({ backgroundColor })}
+          />
+        </section>
         <CustomTextBlockControls
           blocks={state.customTextBlocks}
           selectedId={selectedCustomTextId}
@@ -181,33 +208,6 @@ export function EditorPanel({
             onChange({ sizeId: 'custom', customWidth, customHeight })
           }
         />
-        <section className="settings-section background-section" aria-label="画布背景">
-          <div className="settings-heading">
-            <span>画布背景</span>
-            <BackgroundImageField
-              value={backgroundImage}
-              onChange={onBackgroundImageChange}
-            />
-          </div>
-          {backgroundImage ? (
-            <BackgroundPositionControls
-              positionX={backgroundImage.positionX}
-              positionY={backgroundImage.positionY}
-              onChange={(positionX, positionY) =>
-                onBackgroundImageChange({
-                  ...backgroundImage,
-                  positionX,
-                  positionY,
-                })
-              }
-            />
-          ) : null}
-          <ColorField
-            label="背景颜色"
-            value={state.backgroundColor}
-            onChange={(backgroundColor) => onChange({ backgroundColor })}
-          />
-        </section>
       </aside>
     </>
   )

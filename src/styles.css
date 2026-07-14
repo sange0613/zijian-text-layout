@@ -331,11 +331,6 @@ textarea {
   min-height: 128px;
 }
 
-.signature-input {
-  min-height: 40px;
-  font-size: 13px;
-}
-
 select,
 input[type='number'],
 input[type='text'],

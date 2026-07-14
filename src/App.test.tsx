@@ -39,6 +39,17 @@ it('groups title and body style with their own position controls', () => {
   expect(bodySettings).toContainElement(screen.getByLabelText('正文上下位置'))
 })
 
+it('keeps canvas background controls in the text editing panel', () => {
+  render(<App />)
+
+  const textEditor = screen.getByRole('complementary', { name: '文字编辑' })
+  const stylePanel = screen.getByRole('complementary', { name: '样式设置' })
+  const background = screen.getByRole('region', { name: '画布背景' })
+
+  expect(textEditor).toContainElement(background)
+  expect(stylePanel).not.toContainElement(background)
+})
+
 it('updates the preview text and size immediately', async () => {
   const user = userEvent.setup()
   render(<App />)
@@ -59,6 +70,7 @@ it('keeps the body and signature inputs roomy for longer text', () => {
   expect(screen.getByLabelText('正文内容')).toHaveClass('body-textarea')
   expect(screen.getByLabelText('正文内容')).toHaveAttribute('rows', '5')
   expect(screen.getByLabelText('署名文字')).toHaveClass('signature-input')
+  expect(screen.getByLabelText('署名文字')).toHaveAttribute('rows', '2')
 })
 
 it('applies a custom canvas size and can switch back to a preset', async () => {
