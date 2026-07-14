@@ -36,6 +36,13 @@ export type EditorState = {
   customHeight: number
 }
 
+export type SavedLayoutRecord = {
+  id: string
+  name: string
+  savedAt: number
+  state: EditorState
+}
+
 export type SizePreset = {
   id: string
   label: string

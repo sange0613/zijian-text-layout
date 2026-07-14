@@ -1,6 +1,6 @@
 import { FONT_PRESETS } from '../data/presets'
 import { createTextLayoutPatch } from '../data/textLayoutPresets'
-import type { BackgroundImageValue, EditorState } from '../types'
+import type { BackgroundImageValue, EditorState, SavedLayoutRecord } from '../types'
 import { BackgroundImageField } from './BackgroundImageField'
 import { BackgroundPositionControls } from './BackgroundPositionControls'
 import { ColorField } from './ColorField'
@@ -10,19 +10,30 @@ import { SizePresets } from './SizePresets'
 import { TextStyleControls } from './TextStyleControls'
 import { TextLayoutPresets } from './TextLayoutPresets'
 import { TextPositionControls } from './TextPositionControls'
+import { SavedLayoutRecords } from './SavedLayoutRecords'
 
 type EditorPanelProps = {
   state: EditorState
   backgroundImage: BackgroundImageValue | null
+  savedRecords: SavedLayoutRecord[]
+  justSaved: boolean
   onChange: (patch: Partial<EditorState>) => void
   onBackgroundImageChange: (value: BackgroundImageValue | null) => void
+  onSaveRecord: () => void
+  onApplyRecord: (state: EditorState) => void
+  onRemoveRecord: (id: string) => void
 }
 
 export function EditorPanel({
   state,
   backgroundImage,
+  savedRecords,
+  justSaved,
   onChange,
   onBackgroundImageChange,
+  onSaveRecord,
+  onApplyRecord,
+  onRemoveRecord,
 }: EditorPanelProps) {
   return (
     <aside className="editor-panel" aria-label="排版设置">
@@ -86,6 +97,14 @@ export function EditorPanel({
           />
         </div>
       </fieldset>
+
+      <SavedLayoutRecords
+        records={savedRecords}
+        justSaved={justSaved}
+        onSave={onSaveRecord}
+        onApply={onApplyRecord}
+        onRemove={onRemoveRecord}
+      />
 
       <TextLayoutPresets
         value={state.textLayoutId}

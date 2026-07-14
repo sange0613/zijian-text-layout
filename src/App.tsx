@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { EditorPanel } from './components/EditorPanel'
 import { ExportButton } from './components/ExportButton'
 import { PreviewCanvas } from './components/PreviewCanvas'
@@ -6,10 +6,13 @@ import { getCanvasSize } from './canvas/getCanvasSize'
 import { exportPng } from './export/exportPng'
 import { usePersistedEditorState } from './hooks/usePersistedEditorState'
 import { useSessionBackgroundImage } from './hooks/useSessionBackgroundImage'
+import { useSavedLayoutRecords } from './hooks/useSavedLayoutRecords'
 
 export default function App() {
   const { state, update } = usePersistedEditorState()
   const { backgroundImage, setBackgroundImage } = useSessionBackgroundImage()
+  const { records, save, remove } = useSavedLayoutRecords()
+  const [justSaved, setJustSaved] = useState(false)
   const previewRef = useRef<HTMLDivElement>(null)
   const isEmpty = !state.title.trim() && !state.body.trim() && !state.signature.trim()
   const size = getCanvasSize(state)
@@ -23,6 +26,11 @@ export default function App() {
     })
   }
 
+  const handleSaveRecord = () => {
+    save(state)
+    setJustSaved(true)
+  }
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -33,8 +41,16 @@ export default function App() {
         <EditorPanel
           state={state}
           backgroundImage={backgroundImage}
+          savedRecords={records}
+          justSaved={justSaved}
           onChange={update}
           onBackgroundImageChange={setBackgroundImage}
+          onSaveRecord={handleSaveRecord}
+          onApplyRecord={(savedState) => {
+            update(savedState)
+            setJustSaved(false)
+          }}
+          onRemoveRecord={remove}
         />
         <PreviewCanvas ref={previewRef} state={state} backgroundImage={backgroundImage} />
       </main>

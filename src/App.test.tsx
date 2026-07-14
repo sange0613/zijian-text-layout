@@ -114,6 +114,63 @@ it('moves the title and body independently with position sliders', () => {
   })
 })
 
+it('saves the current text and layout as a reusable local record', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.clear(screen.getByLabelText('标题内容'))
+  await user.type(screen.getByLabelText('标题内容'), '我的常用排版')
+  await user.click(screen.getByRole('button', { name: /标题压底/ }))
+  fireEvent.change(screen.getByRole('slider', { name: '标题字号' }), {
+    target: { value: '104' },
+  })
+  fireEvent.change(screen.getByRole('slider', { name: '标题左右位置' }), {
+    target: { value: '24' },
+  })
+
+  await user.click(screen.getByRole('button', { name: '保存当前记录' }))
+  expect(screen.getByText('已保存')).toBeInTheDocument()
+
+  await user.clear(screen.getByLabelText('标题内容'))
+  await user.type(screen.getByLabelText('标题内容'), '临时内容')
+  await user.click(screen.getByRole('button', { name: /大标题居中/ }))
+
+  await user.click(
+    screen.getByRole('button', { name: '使用记录：我的常用排版' }),
+  )
+
+  expect(screen.getByLabelText('标题内容')).toHaveValue('我的常用排版')
+  expect(screen.getByTestId('preview-canvas')).toHaveAttribute(
+    'data-layout',
+    'number-focus',
+  )
+  expect(screen.getByTestId('preview-title')).toHaveStyle({
+    fontSize: '104px',
+    left: '24%',
+  })
+})
+
+it('keeps saved layout records after the app is reopened and allows deletion', async () => {
+  const user = userEvent.setup()
+  const firstRender = render(<App />)
+
+  await user.clear(screen.getByLabelText('标题内容'))
+  await user.type(screen.getByLabelText('标题内容'), '下次继续')
+  await user.click(screen.getByRole('button', { name: '保存当前记录' }))
+  firstRender.unmount()
+
+  render(<App />)
+  expect(
+    screen.getByRole('button', { name: '使用记录：下次继续' }),
+  ).toBeInTheDocument()
+
+  await user.click(screen.getByRole('button', { name: '删除记录：下次继续' }))
+  expect(
+    screen.queryByRole('button', { name: '使用记录：下次继续' }),
+  ).not.toBeInTheDocument()
+  expect(screen.getByText('还没有保存记录')).toBeInTheDocument()
+})
+
 it('disables export when both text fields are empty', async () => {
   const user = userEvent.setup()
   render(<App />)
