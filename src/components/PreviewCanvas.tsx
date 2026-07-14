@@ -127,6 +127,26 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
               {state.signature}
             </div>
           ) : null}
+          {state.customTextBlocks.map((block) => {
+            const font = FONT_BY_ID.get(block.fontId)!
+            return block.text ? (
+              <div
+                key={block.id}
+                className="preview-custom-text"
+                data-testid={`preview-custom-text-${block.id}`}
+                style={{
+                  left: `${block.position.x}%`,
+                  top: `${block.position.y}%`,
+                  color: block.color,
+                  fontFamily: `'${font.family}', ${font.fallback}`,
+                  fontSize: block.fontSize,
+                  fontWeight: block.fontWeight,
+                }}
+              >
+                {block.text}
+              </div>
+            ) : null
+          })}
         </div>
       </div>
       <div className="preview-meta" aria-hidden="true">

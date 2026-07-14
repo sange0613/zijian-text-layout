@@ -4,6 +4,7 @@ import type { BackgroundImageValue, EditorState, SavedLayoutRecord } from '../ty
 import { BackgroundImageField } from './BackgroundImageField'
 import { BackgroundPositionControls } from './BackgroundPositionControls'
 import { ColorField } from './ColorField'
+import { CustomTextBlockControls } from './CustomTextBlockControls'
 import { FontSizeSlider } from './FontSizeSlider'
 import { SignaturePositionPicker } from './SignaturePositionPicker'
 import { SizePresets } from './SizePresets'
@@ -19,7 +20,15 @@ type EditorPanelProps = {
   recordName: string
   justSaved: boolean
   onChange: (patch: Partial<EditorState>) => void
+  selectedCustomTextId: string | null
   onBackgroundImageChange: (value: BackgroundImageValue | null) => void
+  onSelectCustomText: (id: string) => void
+  onAddCustomText: () => void
+  onUpdateCustomText: (
+    id: string,
+    patch: Partial<Omit<EditorState['customTextBlocks'][number], 'id'>>,
+  ) => void
+  onRemoveCustomText: (id: string) => void
   onRecordNameChange: (name: string) => void
   onSaveRecord: () => void
   onExportRecords: () => void
@@ -35,7 +44,12 @@ export function EditorPanel({
   recordName,
   justSaved,
   onChange,
+  selectedCustomTextId,
   onBackgroundImageChange,
+  onSelectCustomText,
+  onAddCustomText,
+  onUpdateCustomText,
+  onRemoveCustomText,
   onRecordNameChange,
   onSaveRecord,
   onExportRecords,
@@ -60,7 +74,8 @@ export function EditorPanel({
           <span>正文</span>
           <textarea
             aria-label="正文内容"
-            rows={2}
+            className="body-textarea"
+            rows={5}
             value={state.body}
             onChange={(event) => onChange({ body: event.target.value })}
           />
@@ -70,6 +85,7 @@ export function EditorPanel({
             <span>署名</span>
             <input
               aria-label="署名文字"
+              className="signature-input"
               type="text"
               placeholder="例如：摄影 / 林野"
               value={state.signature}
@@ -127,6 +143,14 @@ export function EditorPanel({
         bodyPosition={state.bodyPosition}
         onTitleChange={(titlePosition) => onChange({ titlePosition })}
         onBodyChange={(bodyPosition) => onChange({ bodyPosition })}
+      />
+      <CustomTextBlockControls
+        blocks={state.customTextBlocks}
+        selectedId={selectedCustomTextId}
+        onSelect={onSelectCustomText}
+        onAdd={onAddCustomText}
+        onUpdate={onUpdateCustomText}
+        onRemove={onRemoveCustomText}
       />
       <TextStyleControls
         name="标题"

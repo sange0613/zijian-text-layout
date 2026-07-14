@@ -34,6 +34,14 @@ it('updates the preview text and size immediately', async () => {
   expect(screen.getByTestId('preview-canvas')).toHaveAttribute('data-size', '1080x1080')
 })
 
+it('keeps the body and signature inputs roomy for longer text', () => {
+  render(<App />)
+
+  expect(screen.getByLabelText('正文内容')).toHaveClass('body-textarea')
+  expect(screen.getByLabelText('正文内容')).toHaveAttribute('rows', '5')
+  expect(screen.getByLabelText('署名文字')).toHaveClass('signature-input')
+})
+
 it('applies a custom canvas size and can switch back to a preset', async () => {
   const user = userEvent.setup()
   render(<App />)
@@ -111,6 +119,42 @@ it('moves the title and body independently with position sliders', () => {
   expect(screen.getByTestId('preview-body')).toHaveStyle({
     left: '72%',
     top: '78%',
+  })
+})
+
+it('adds multiple custom text blocks and moves the selected one', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(screen.getByRole('button', { name: '添加文字' }))
+  await user.clear(screen.getByLabelText('自定义文字内容'))
+  await user.type(screen.getByLabelText('自定义文字内容'), '第一条补充')
+
+  await user.click(screen.getByRole('button', { name: '添加文字' }))
+  await user.clear(screen.getByLabelText('自定义文字内容'))
+  await user.type(screen.getByLabelText('自定义文字内容'), '第二条重点')
+
+  fireEvent.change(screen.getByRole('slider', { name: '自定义文字左右位置' }), {
+    target: { value: '72' },
+  })
+  fireEvent.change(screen.getByRole('slider', { name: '自定义文字上下位置' }), {
+    target: { value: '28' },
+  })
+  fireEvent.change(screen.getByRole('slider', { name: '自定义文字字号' }), {
+    target: { value: '46' },
+  })
+
+  const first = screen
+    .getAllByText('第一条补充')
+    .find((element) => element.classList.contains('preview-custom-text'))
+  const second = screen
+    .getAllByText('第二条重点')
+    .find((element) => element.classList.contains('preview-custom-text'))
+  expect(first).toBeInTheDocument()
+  expect(second).toHaveStyle({
+    left: '72%',
+    top: '28%',
+    fontSize: '46px',
   })
 })
 

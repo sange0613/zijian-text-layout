@@ -10,6 +10,16 @@ export type TextBlockPosition = {
   y: number
 }
 
+export type CustomTextBlock = {
+  id: string
+  text: string
+  fontId: string
+  fontSize: number
+  fontWeight: number
+  color: string
+  position: TextBlockPosition
+}
+
 export type SignaturePosition =
   | 'top-left'
   | 'top-center'
@@ -30,6 +40,7 @@ export type EditorState = {
   bodyStyle: TextStyle
   titlePosition: TextBlockPosition
   bodyPosition: TextBlockPosition
+  customTextBlocks: CustomTextBlock[]
   backgroundColor: string
   sizeId: string
   customWidth: number

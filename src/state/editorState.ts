@@ -1,6 +1,12 @@
 import { FONT_BY_ID, SIZE_BY_ID } from '../data/presets'
 import { DEFAULT_TEXT_LAYOUT_ID, TEXT_LAYOUT_BY_ID } from '../data/textLayoutPresets'
-import type { EditorState, SignaturePosition, TextBlockPosition, TextStyle } from '../types'
+import type {
+  CustomTextBlock,
+  EditorState,
+  SignaturePosition,
+  TextBlockPosition,
+  TextStyle,
+} from '../types'
 
 export const STORAGE_KEY = 'zijian-editor-state-v1'
 
@@ -26,6 +32,7 @@ export const DEFAULT_EDITOR_STATE: EditorState = {
   },
   titlePosition: { x: 50, y: 43 },
   bodyPosition: { x: 50, y: 59 },
+  customTextBlocks: [],
   backgroundColor: '#FFFFFF',
   sizeId: 'redbook',
   customWidth: 1080,
@@ -82,6 +89,26 @@ function isTextBlockPosition(value: unknown): value is TextBlockPosition {
   )
 }
 
+function isCustomTextBlock(value: unknown): value is CustomTextBlock {
+  if (!value || typeof value !== 'object') return false
+  const block = value as Record<string, unknown>
+  return (
+    typeof block.id === 'string' &&
+    typeof block.text === 'string' &&
+    typeof block.fontId === 'string' &&
+    FONT_BY_ID.has(block.fontId) &&
+    typeof block.fontSize === 'number' &&
+    Number.isFinite(block.fontSize) &&
+    block.fontSize >= 12 &&
+    block.fontSize <= 160 &&
+    typeof block.fontWeight === 'number' &&
+    [400, 500, 600, 700, 800, 900].includes(block.fontWeight) &&
+    typeof block.color === 'string' &&
+    HEX_COLOR.test(block.color) &&
+    isTextBlockPosition(block.position)
+  )
+}
+
 function isCanvasDimension(value: unknown): value is number {
   return (
     typeof value === 'number' &&
@@ -111,6 +138,8 @@ function isEditorState(value: unknown): value is EditorState {
     isTextStyle(state.bodyStyle) &&
     isTextBlockPosition(state.titlePosition) &&
     isTextBlockPosition(state.bodyPosition) &&
+    Array.isArray(state.customTextBlocks) &&
+    state.customTextBlocks.every(isCustomTextBlock) &&
     typeof state.backgroundColor === 'string' &&
     HEX_COLOR.test(state.backgroundColor) &&
     typeof state.sizeId === 'string' &&
@@ -167,6 +196,7 @@ export function parseStoredState(raw: string | null): EditorState {
             ...(!('bodyPosition' in value)
               ? { bodyPosition: DEFAULT_EDITOR_STATE.bodyPosition }
               : {}),
+            ...(!('customTextBlocks' in value) ? { customTextBlocks: [] } : {}),
             ...(!('customWidth' in value) ? { customWidth: 1080 } : {}),
             ...(!('customHeight' in value) ? { customHeight: 1080 } : {}),
           }
@@ -190,6 +220,15 @@ export function parseStoredState(raw: string | null): EditorState {
         x: clamp(candidate.bodyPosition.x, 0, 100),
         y: clamp(candidate.bodyPosition.y, 0, 100),
       },
+      customTextBlocks: candidate.customTextBlocks.slice(0, 12).map((block) => ({
+        ...block,
+        text: block.text.slice(0, 200),
+        fontSize: clamp(block.fontSize, 12, 120),
+        position: {
+          x: clamp(block.position.x, 0, 100),
+          y: clamp(block.position.y, 0, 100),
+        },
+      })),
       signatureFontSize: clamp(candidate.signatureFontSize, 12, 64),
       customWidth: Math.round(clamp(candidate.customWidth, 320, 4096)),
       customHeight: Math.round(clamp(candidate.customHeight, 320, 4096)),

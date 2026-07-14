@@ -289,6 +289,15 @@ textarea {
   line-height: 1.45;
 }
 
+.body-textarea {
+  min-height: 128px;
+}
+
+.signature-input {
+  min-height: 40px;
+  font-size: 13px;
+}
+
 select,
 input[type='number'],
 input[type='text'],
@@ -390,6 +399,103 @@ button:focus-visible {
 .text-position-controls {
   display: grid;
   gap: 8px;
+}
+
+.custom-text-controls {
+  display: grid;
+  gap: 8px;
+}
+
+.custom-text-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.custom-text-add-button,
+.custom-text-remove-button {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--ink);
+  border-radius: 7px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.custom-text-add-button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.custom-text-list {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.custom-text-chip {
+  flex: 0 0 auto;
+  max-width: 116px;
+  height: 28px;
+  overflow: hidden;
+  padding: 0 9px;
+  border: 1px solid #dedede;
+  border-radius: 7px;
+  background: #fafafa;
+  color: #555;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.custom-text-chip--active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+
+.custom-text-editor {
+  display: grid;
+  gap: 8px;
+}
+
+.custom-text-content-field textarea {
+  min-height: 86px;
+}
+
+.custom-text-position-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.custom-text-remove-button {
+  justify-self: start;
+  border-color: #d9d9d9;
+  background: #fafafa;
+  color: #555;
+}
+
+.custom-text-remove-button:hover {
+  border-color: #aaa;
+  background: #fff;
+}
+
+.custom-text-empty {
+  margin: 0;
+  padding: 8px 9px;
+  border-radius: 7px;
+  background: #fafafa;
+  color: #999;
+  font-size: 11px;
 }
 
 .text-position-group {
@@ -987,6 +1093,18 @@ button:focus-visible {
   line-height: 1.4;
   letter-spacing: .04em;
   z-index: 1;
+}
+
+.preview-custom-text {
+  position: absolute;
+  z-index: 4;
+  max-width: 72%;
+  transform: translate(-50%, -50%);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.28;
+  text-align: center;
+  pointer-events: none;
 }
 
 .preview-content h2 {
