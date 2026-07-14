@@ -830,11 +830,13 @@ button:focus-visible {
 
 .signature-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 88px 82px;
+  grid-template-columns: minmax(0, 1fr) 82px;
   align-items: end;
   gap: 6px;
   margin-top: 8px;
 }
+
+.signature-field { grid-column: 1 / -1; }
 
 .signature-size-control .font-size-slider { margin-top: 8px; }
 
