@@ -58,15 +58,21 @@ export function EditorPanel({
 }: EditorPanelProps) {
   return (
     <>
-      <aside className="editor-panel editor-panel--content" aria-label="文字编辑">
+      <aside className="editor-panel editor-panel--content" aria-label="文字与样式">
         <div className="panel-intro">
-          <h2>文字编辑</h2>
-          <p>填写画面中的文字内容</p>
+          <h2>文字与样式</h2>
+          <p>输入文字后，直接调整对应样式</p>
         </div>
-        <fieldset className="settings-section content-fields">
-          <legend>标题与正文</legend>
+        <section
+          className="settings-section text-edit-section text-edit-section--title"
+          aria-labelledby="title-editor-heading"
+        >
+          <div className="edit-section-heading">
+            <h3 id="title-editor-heading">标题</h3>
+            <span>主视觉文字</span>
+          </div>
           <label className="field-control">
-            <span>标题</span>
+            <span className="visually-hidden">标题内容</span>
             <textarea
               aria-label="标题内容"
               rows={2}
@@ -74,8 +80,25 @@ export function EditorPanel({
               onChange={(event) => onChange({ title: event.target.value })}
             />
           </label>
+          <TextStyleControls
+            name="标题"
+            value={state.titleStyle}
+            position={state.titlePosition}
+            embedded
+            onChange={(titleStyle) => onChange({ titleStyle })}
+            onPositionChange={(titlePosition) => onChange({ titlePosition })}
+          />
+        </section>
+        <section
+          className="settings-section text-edit-section text-edit-section--body"
+          aria-labelledby="body-editor-heading"
+        >
+          <div className="edit-section-heading">
+            <h3 id="body-editor-heading">正文</h3>
+            <span>内容与说明</span>
+          </div>
           <label className="field-control">
-            <span>正文</span>
+            <span className="visually-hidden">正文内容</span>
             <textarea
               aria-label="正文内容"
               className="body-textarea"
@@ -84,7 +107,15 @@ export function EditorPanel({
               onChange={(event) => onChange({ body: event.target.value })}
             />
           </label>
-        </fieldset>
+          <TextStyleControls
+            name="正文"
+            value={state.bodyStyle}
+            position={state.bodyPosition}
+            embedded
+            onChange={(bodyStyle) => onChange({ bodyStyle })}
+            onPositionChange={(bodyPosition) => onChange({ bodyPosition })}
+          />
+        </section>
         <fieldset className="settings-section signature-section">
           <legend>署名</legend>
           <div className="signature-row">
@@ -128,14 +159,29 @@ export function EditorPanel({
             />
           </div>
         </fieldset>
+        <CustomTextBlockControls
+          blocks={state.customTextBlocks}
+          selectedId={selectedCustomTextId}
+          onSelect={onSelectCustomText}
+          onAdd={onAddCustomText}
+          onUpdate={onUpdateCustomText}
+          onRemove={onRemoveCustomText}
+        />
+      </aside>
+
+      <aside className="editor-panel editor-panel--style" aria-label="排版与画布">
+        <div className="panel-intro">
+          <h2>排版与画布</h2>
+          <p>调整整张图片的布局、尺寸和背景</p>
+        </div>
         <section className="settings-section background-section" aria-label="画布背景">
           <div className="settings-heading">
             <span>画布背景</span>
-            <BackgroundImageField
-              value={backgroundImage}
-              onChange={onBackgroundImageChange}
-            />
           </div>
+          <BackgroundImageField
+            value={backgroundImage}
+            onChange={onBackgroundImageChange}
+          />
           {backgroundImage ? (
             <BackgroundPositionControls
               positionX={backgroundImage.positionX}
@@ -155,13 +201,18 @@ export function EditorPanel({
             onChange={(backgroundColor) => onChange({ backgroundColor })}
           />
         </section>
-        <CustomTextBlockControls
-          blocks={state.customTextBlocks}
-          selectedId={selectedCustomTextId}
-          onSelect={onSelectCustomText}
-          onAdd={onAddCustomText}
-          onUpdate={onUpdateCustomText}
-          onRemove={onRemoveCustomText}
+        <TextLayoutPresets
+          value={state.textLayoutId}
+          onChange={(textLayoutId) => onChange(createTextLayoutPatch(textLayoutId, state))}
+        />
+        <SizePresets
+          value={state.sizeId}
+          customWidth={state.customWidth}
+          customHeight={state.customHeight}
+          onChange={(sizeId) => onChange({ sizeId })}
+          onCustomSizeChange={(customWidth, customHeight) =>
+            onChange({ sizeId: 'custom', customWidth, customHeight })
+          }
         />
         <SavedLayoutRecords
           records={savedRecords}
@@ -173,40 +224,6 @@ export function EditorPanel({
           onRename={onRenameRecord}
           onApply={onApplyRecord}
           onRemove={onRemoveRecord}
-        />
-      </aside>
-
-      <aside className="editor-panel editor-panel--style" aria-label="样式设置">
-        <div className="panel-intro">
-          <h2>样式设置</h2>
-          <p>选择排版，再微调标题和正文</p>
-        </div>
-        <TextLayoutPresets
-          value={state.textLayoutId}
-          onChange={(textLayoutId) => onChange(createTextLayoutPatch(textLayoutId, state))}
-        />
-        <TextStyleControls
-          name="标题"
-          value={state.titleStyle}
-          position={state.titlePosition}
-          onChange={(titleStyle) => onChange({ titleStyle })}
-          onPositionChange={(titlePosition) => onChange({ titlePosition })}
-        />
-        <TextStyleControls
-          name="正文"
-          value={state.bodyStyle}
-          position={state.bodyPosition}
-          onChange={(bodyStyle) => onChange({ bodyStyle })}
-          onPositionChange={(bodyPosition) => onChange({ bodyPosition })}
-        />
-        <SizePresets
-          value={state.sizeId}
-          customWidth={state.customWidth}
-          customHeight={state.customHeight}
-          onChange={(sizeId) => onChange({ sizeId })}
-          onCustomSizeChange={(customWidth, customHeight) =>
-            onChange({ sizeId: 'custom', customWidth, customHeight })
-          }
         />
       </aside>
     </>

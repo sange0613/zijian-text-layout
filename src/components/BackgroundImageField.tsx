@@ -20,6 +20,16 @@ export function BackgroundImageField({
   return (
     <div className="background-image-field">
       <label className="background-image-upload">
+        <svg
+          className="background-image-upload-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M4.5 6.5h15v11h-15z" />
+          <path d="m6.8 15 3.1-3.4 2.6 2.5 1.8-1.9 2.9 2.8" />
+          <circle cx="15.8" cy="9.5" r="1.25" />
+        </svg>
         <span>{isPreparing ? '读取中…' : uploadLabel}</span>
         <input
           aria-label={uploadLabel}

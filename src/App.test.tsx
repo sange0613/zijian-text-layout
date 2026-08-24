@@ -16,19 +16,24 @@ it('renders the simple editor workspace', () => {
   render(<App />)
   expect(screen.getByRole('heading', { name: '字间' })).toBeInTheDocument()
   expect(screen.getByRole('main')).toBeInTheDocument()
-  expect(screen.getByRole('complementary', { name: '文字编辑' })).toBeInTheDocument()
+  expect(screen.getByRole('complementary', { name: '文字与样式' })).toBeInTheDocument()
   expect(screen.getByLabelText('排版预览')).toBeInTheDocument()
-  expect(screen.getByRole('complementary', { name: '样式设置' })).toBeInTheDocument()
+  expect(screen.getByRole('complementary', { name: '排版与画布' })).toBeInTheDocument()
   expect(screen.getByRole('button', { name: '下载 PNG' })).toBeInTheDocument()
   expect(screen.getAllByRole('option', { name: /思源|得意|汇文/ })).toHaveLength(12)
 })
 
-it('groups title and body style with their own position controls', () => {
+it('places title and body adjustments beside their matching text inputs', () => {
   render(<App />)
 
+  const textEditor = screen.getByRole('complementary', { name: '文字与样式' })
   const titleSettings = screen.getByRole('group', { name: '标题样式' })
   const bodySettings = screen.getByRole('group', { name: '正文样式' })
 
+  expect(textEditor).toContainElement(screen.getByLabelText('标题内容'))
+  expect(textEditor).toContainElement(titleSettings)
+  expect(textEditor).toContainElement(screen.getByLabelText('正文内容'))
+  expect(textEditor).toContainElement(bodySettings)
   expect(titleSettings).toContainElement(screen.getByLabelText('标题字体'))
   expect(titleSettings).toContainElement(screen.getByLabelText('标题字号'))
   expect(titleSettings).toContainElement(screen.getByLabelText('标题左右位置'))
@@ -39,15 +44,15 @@ it('groups title and body style with their own position controls', () => {
   expect(bodySettings).toContainElement(screen.getByLabelText('正文上下位置'))
 })
 
-it('keeps canvas background controls in the text editing panel', () => {
+it('groups canvas background controls with global layout settings', () => {
   render(<App />)
 
-  const textEditor = screen.getByRole('complementary', { name: '文字编辑' })
-  const stylePanel = screen.getByRole('complementary', { name: '样式设置' })
+  const textEditor = screen.getByRole('complementary', { name: '文字与样式' })
+  const stylePanel = screen.getByRole('complementary', { name: '排版与画布' })
   const background = screen.getByRole('region', { name: '画布背景' })
 
-  expect(textEditor).toContainElement(background)
-  expect(stylePanel).not.toContainElement(background)
+  expect(textEditor).not.toContainElement(background)
+  expect(stylePanel).toContainElement(background)
 })
 
 it('updates the preview text and size immediately', async () => {
