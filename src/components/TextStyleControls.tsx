@@ -9,6 +9,7 @@ type TextStyleControlsProps = {
   onChange: (value: TextStyle) => void
   position: TextBlockPosition
   onPositionChange: (value: TextBlockPosition) => void
+  embedded?: boolean
 }
 
 function PositionSlider({
@@ -43,12 +44,12 @@ export function TextStyleControls({
   onChange,
   position,
   onPositionChange,
+  embedded = false,
 }: TextStyleControlsProps) {
   const update = (patch: Partial<TextStyle>) => onChange({ ...value, ...patch })
 
-  return (
-    <fieldset className="settings-section style-controls">
-      <legend>{name}样式</legend>
+  const controls = (
+    <>
       <div className="control-row control-row--font">
         <label className="field-control">
           <span>{name}字体</span>
@@ -99,6 +100,25 @@ export function TextStyleControls({
           onChange={(y) => onPositionChange({ ...position, y })}
         />
       </div>
+    </>
+  )
+
+  if (embedded) {
+    return (
+      <div
+        className="style-controls style-controls--embedded"
+        role="group"
+        aria-label={`${name}样式`}
+      >
+        {controls}
+      </div>
+    )
+  }
+
+  return (
+    <fieldset className="settings-section style-controls">
+      <legend>{name}样式</legend>
+      {controls}
     </fieldset>
   )
 }

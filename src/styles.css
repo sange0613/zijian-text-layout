@@ -72,7 +72,7 @@ button { color: inherit; }
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(290px, 328px) minmax(400px, 1fr) minmax(310px, 350px);
+  grid-template-columns: minmax(360px, 390px) minmax(400px, 1fr) minmax(310px, 350px);
   height: calc(100vh - 64px);
   min-height: 620px;
 }
@@ -142,6 +142,70 @@ button { color: inherit; }
   line-height: 1;
   font-weight: 700;
   letter-spacing: .12em;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}
+
+.text-edit-section {
+  margin: 10px -8px 0;
+  padding: 12px 10px 13px;
+  border: 1px solid rgba(60, 60, 67, .1);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, .42);
+}
+
+.text-edit-section--title {
+  background: linear-gradient(145deg, rgba(0, 122, 255, .055), rgba(255, 255, 255, .48));
+}
+
+.text-edit-section--body {
+  background: linear-gradient(145deg, rgba(52, 199, 89, .045), rgba(255, 255, 255, .48));
+}
+
+.edit-section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.edit-section-heading h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 680;
+  letter-spacing: -.015em;
+}
+
+.edit-section-heading span {
+  color: #8e8e93;
+  font-size: 10px;
+}
+
+.style-controls--embedded {
+  display: grid;
+  gap: 0;
+  margin-top: 9px;
+}
+
+.style-controls--embedded .font-size-slider,
+.style-controls--embedded .color-control {
+  margin-top: 8px;
+}
+
+.style-controls--embedded .text-position-group--inline {
+  margin-top: 9px;
+  padding-top: 8px;
 }
 
 .settings-heading {
@@ -340,7 +404,7 @@ textarea {
 }
 
 .body-textarea {
-  min-height: 128px;
+  min-height: 112px;
 }
 
 select,
@@ -894,30 +958,50 @@ button:focus-visible {
 
 .background-image-field {
   min-width: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
-  justify-content: flex-end;
-  gap: 5px;
+  gap: 7px;
   color: #686868;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
 }
 
 .background-image-upload {
-  flex: none;
-  height: 24px;
+  min-width: 0;
+  height: 42px;
   display: inline-flex;
   align-items: center;
-  padding: 0 8px;
-  border: 1px solid #d8d8d8;
-  border-radius: 6px;
-  background: #fff;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, .2);
   cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 100ms ease-out;
 }
 
-.background-image-upload:hover { border-color: #8c8c8c; }
+.background-image-upload:hover {
+  border-color: #0875df;
+  background: #0875df;
+  transform: translateY(-1px);
+}
+
+.background-image-upload:active { transform: scale(.985); }
+
+.background-image-upload-icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .background-image-upload:focus-within {
   border-color: var(--focus);
   box-shadow: 0 0 0 3px rgba(0, 0, 0, .09);
@@ -934,7 +1018,7 @@ button:focus-visible {
 }
 
 .background-image-name {
-  max-width: 70px;
+  max-width: 96px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -953,7 +1037,7 @@ button:focus-visible {
 
 .background-image-error {
   position: absolute;
-  top: 31px;
+  top: 67px;
   right: 0;
   z-index: 2;
   padding: 4px 6px;
@@ -964,7 +1048,7 @@ button:focus-visible {
 }
 
 .background-section { position: relative; border-bottom: 0; }
-.background-section .settings-heading { margin-bottom: 1px; }
+.background-section .settings-heading { margin-bottom: 7px; }
 
 .background-position-controls {
   display: grid;
@@ -1572,8 +1656,20 @@ button:not(:disabled):active {
 }
 
 .background-image-upload:hover {
-  border-color: rgba(0, 122, 255, .38);
-  background: rgba(255, 255, 255, .82);
+  border-color: #0875df;
+  background: #0875df;
+}
+
+.background-section .background-image-upload {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, .2);
+}
+
+.background-section .background-image-upload:hover {
+  border-color: #0875df;
+  background: #0875df;
 }
 
 .background-image-upload:focus-within {
