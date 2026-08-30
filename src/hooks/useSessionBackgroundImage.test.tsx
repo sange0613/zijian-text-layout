@@ -12,6 +12,8 @@ it('revokes replaced, removed, and unmounted object URLs', () => {
       name: 'first.jpg',
       positionX: 50,
       positionY: 50,
+      opacity: 100,
+      blur: 0,
     }),
   )
   act(() =>
@@ -20,6 +22,8 @@ it('revokes replaced, removed, and unmounted object URLs', () => {
       name: 'second.jpg',
       positionX: 50,
       positionY: 50,
+      opacity: 100,
+      blur: 0,
     }),
   )
   expect(revokeObjectURL).toHaveBeenCalledWith('blob:first')
@@ -33,6 +37,8 @@ it('revokes replaced, removed, and unmounted object URLs', () => {
       name: 'third.jpg',
       positionX: 50,
       positionY: 50,
+      opacity: 100,
+      blur: 0,
     }),
   )
   unmount()

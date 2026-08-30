@@ -10,6 +10,8 @@ it('uploads and removes a valid background image', async () => {
     name: 'poster.jpg',
     positionX: 50,
     positionY: 50,
+    opacity: 100,
+    blur: 0,
   }
   const prepare = vi.fn().mockResolvedValue(preparedImage)
   const onChange = vi.fn()
@@ -46,6 +48,8 @@ it('shows an upload error without replacing the current image', async () => {
         name: 'current.jpg',
         positionX: 50,
         positionY: 50,
+        opacity: 100,
+        blur: 0,
       }}
       onChange={onChange}
       prepare={prepare}

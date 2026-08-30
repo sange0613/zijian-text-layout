@@ -9,6 +9,8 @@ vi.mock('./background/prepareBackgroundImage', () => ({
     name: file.name,
     positionX: 50,
     positionY: 50,
+    opacity: 100,
+    blur: 0,
   })),
 }))
 
@@ -365,6 +367,7 @@ it('uploads, keeps, and removes a cover background image', async () => {
   const file = new File(['image'], 'poster.jpg', { type: 'image/jpeg' })
 
   expect(screen.queryByRole('slider', { name: '背景图左右位置' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('slider', { name: '背景图透明度' })).not.toBeInTheDocument()
   await user.upload(screen.getByLabelText('上传背景图'), file)
   expect(screen.getByTestId('preview-background-image')).toHaveAttribute('src', 'blob:poster')
   expect(screen.getByTestId('preview-background-image')).toHaveClass('preview-background-image')
@@ -379,10 +382,22 @@ it('uploads, keeps, and removes a cover background image', async () => {
     objectPosition: '20% 75%',
   })
 
+  fireEvent.change(screen.getByRole('slider', { name: '背景图透明度' }), {
+    target: { value: '55' },
+  })
+  fireEvent.change(screen.getByRole('slider', { name: '背景图模糊度' }), {
+    target: { value: '12' },
+  })
+  expect(screen.getByTestId('preview-background-image')).toHaveStyle({
+    opacity: '0.55',
+    filter: 'blur(12px)',
+  })
+
   await user.click(screen.getByRole('button', { name: /方图 1:1/ }))
   expect(screen.getByTestId('preview-background-image')).toHaveAttribute('src', 'blob:poster')
 
   await user.click(screen.getByRole('button', { name: '移除背景图' }))
   expect(screen.queryByTestId('preview-background-image')).not.toBeInTheDocument()
   expect(screen.queryByRole('slider', { name: '背景图左右位置' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('slider', { name: '背景图透明度' })).not.toBeInTheDocument()
 })

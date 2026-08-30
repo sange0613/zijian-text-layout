@@ -2,6 +2,7 @@ import { FONT_PRESETS } from '../data/presets'
 import { createTextLayoutPatch } from '../data/textLayoutPresets'
 import type { BackgroundImageValue, EditorState, SavedLayoutRecord } from '../types'
 import { BackgroundImageField } from './BackgroundImageField'
+import { BackgroundAppearanceControls } from './BackgroundAppearanceControls'
 import { BackgroundPositionControls } from './BackgroundPositionControls'
 import { ColorField } from './ColorField'
 import { CustomTextBlockControls } from './CustomTextBlockControls'
@@ -183,17 +184,29 @@ export function EditorPanel({
             onChange={onBackgroundImageChange}
           />
           {backgroundImage ? (
-            <BackgroundPositionControls
-              positionX={backgroundImage.positionX}
-              positionY={backgroundImage.positionY}
-              onChange={(positionX, positionY) =>
-                onBackgroundImageChange({
-                  ...backgroundImage,
-                  positionX,
-                  positionY,
-                })
-              }
-            />
+            <>
+              <BackgroundPositionControls
+                positionX={backgroundImage.positionX}
+                positionY={backgroundImage.positionY}
+                onChange={(positionX, positionY) =>
+                  onBackgroundImageChange({
+                    ...backgroundImage,
+                    positionX,
+                    positionY,
+                  })
+                }
+              />
+              <BackgroundAppearanceControls
+                opacity={backgroundImage.opacity}
+                blur={backgroundImage.blur}
+                onOpacityChange={(opacity) =>
+                  onBackgroundImageChange({ ...backgroundImage, opacity })
+                }
+                onBlurChange={(blur) =>
+                  onBackgroundImageChange({ ...backgroundImage, blur })
+                }
+              />
+            </>
           ) : null}
           <ColorField
             label="背景颜色"
