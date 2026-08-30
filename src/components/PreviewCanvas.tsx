@@ -75,6 +75,9 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
               src={backgroundImage.url}
               style={{
                 objectPosition: `${backgroundImage.positionX}% ${backgroundImage.positionY}%`,
+                opacity: backgroundImage.opacity / 100,
+                filter: `blur(${backgroundImage.blur}px)`,
+                transform: `scale(${1 + backgroundImage.blur / 300})`,
               }}
               alt=""
               aria-hidden="true"

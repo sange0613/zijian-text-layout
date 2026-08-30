@@ -75,6 +75,8 @@ export type BackgroundImageValue = {
   name: string
   positionX: number
   positionY: number
+  opacity: number
+  blur: number
 }
 
 export type TextLayoutPreset = {

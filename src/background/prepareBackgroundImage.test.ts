@@ -17,6 +17,8 @@ describe('prepareBackgroundImage', () => {
       name: '海报.jpg',
       positionX: 50,
       positionY: 50,
+      opacity: 100,
+      blur: 0,
     })
     expect(deps.decode).toHaveBeenCalledWith('blob:poster')
   })
