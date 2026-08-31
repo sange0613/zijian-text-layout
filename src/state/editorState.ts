@@ -18,6 +18,7 @@ export const DEFAULT_EDITOR_STATE: EditorState = {
   signaturePosition: 'bottom-left',
   signatureFontId: 'source-sans',
   signatureFontSize: 20,
+  signatureColor: '#4B4B4B',
   titleStyle: {
     fontId: 'smiley',
     fontSize: 88,
@@ -134,6 +135,8 @@ function isEditorState(value: unknown): value is EditorState {
     Number.isFinite(state.signatureFontSize) &&
     state.signatureFontSize >= 12 &&
     state.signatureFontSize <= 240 &&
+    typeof state.signatureColor === 'string' &&
+    HEX_COLOR.test(state.signatureColor) &&
     isTextStyle(state.titleStyle) &&
     isTextStyle(state.bodyStyle) &&
     isTextBlockPosition(state.titlePosition) &&
@@ -164,6 +167,17 @@ export function parseStoredState(raw: string | null): EditorState {
       Number.isFinite(value.bodyStyle.fontSize)
         ? clamp(value.bodyStyle.fontSize, 12, 80)
         : DEFAULT_EDITOR_STATE.bodyStyle.fontSize
+    const legacyBodyColor =
+      value &&
+      typeof value === 'object' &&
+      'bodyStyle' in value &&
+      value.bodyStyle &&
+      typeof value.bodyStyle === 'object' &&
+      'color' in value.bodyStyle &&
+      typeof value.bodyStyle.color === 'string' &&
+      HEX_COLOR.test(value.bodyStyle.color)
+        ? value.bodyStyle.color
+        : DEFAULT_EDITOR_STATE.signatureColor
     const candidate =
       value && typeof value === 'object'
         ? {
@@ -189,6 +203,9 @@ export function parseStoredState(raw: string | null): EditorState {
                     Math.max(14, legacyBodyFontSize * 0.72),
                   ),
                 }
+              : {}),
+            ...(!('signatureColor' in value)
+              ? { signatureColor: legacyBodyColor }
               : {}),
             ...(!('titlePosition' in value)
               ? { titlePosition: DEFAULT_EDITOR_STATE.titlePosition }

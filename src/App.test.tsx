@@ -346,6 +346,19 @@ it('controls signature size independently from body size', async () => {
   expect(screen.getByTestId('preview-signature')).toHaveStyle({ fontSize: '42px' })
 })
 
+it('controls signature color independently from body color', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.type(screen.getByLabelText('署名文字'), '摄影 / 林野')
+  fireEvent.change(screen.getByLabelText('署名颜色'), {
+    target: { value: '#B23A48' },
+  })
+
+  expect(screen.getByTestId('preview-signature')).toHaveStyle({ color: '#B23A48' })
+  expect(screen.getByTestId('preview-body')).not.toHaveStyle({ color: '#B23A48' })
+})
+
 it('keeps a selected signature anchor when the body becomes multiline', async () => {
   const user = userEvent.setup()
   render(<App />)

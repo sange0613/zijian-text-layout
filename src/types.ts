@@ -36,6 +36,7 @@ export type EditorState = {
   signaturePosition: SignaturePosition
   signatureFontId: string
   signatureFontSize: number
+  signatureColor: string
   titleStyle: TextStyle
   bodyStyle: TextStyle
   titlePosition: TextBlockPosition

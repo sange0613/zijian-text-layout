@@ -159,6 +159,11 @@ export function EditorPanel({
               onChange={(signatureFontSize) => onChange({ signatureFontSize })}
             />
           </div>
+          <ColorField
+            label="署名颜色"
+            value={state.signatureColor}
+            onChange={(signatureColor) => onChange({ signatureColor })}
+          />
         </fieldset>
         <CustomTextBlockControls
           blocks={state.customTextBlocks}

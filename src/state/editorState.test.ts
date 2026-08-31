@@ -181,6 +181,21 @@ describe('parseStoredState', () => {
     expect(parseStoredState(JSON.stringify(saved))).toEqual(saved)
   })
 
+  it('migrates a legacy signature color from the saved body color', () => {
+    const legacy = { ...DEFAULT_EDITOR_STATE } as Record<string, unknown>
+    delete legacy.signatureColor
+    legacy.bodyStyle = { ...DEFAULT_EDITOR_STATE.bodyStyle, color: '#C44A3A' }
+
+    expect(parseStoredState(JSON.stringify(legacy))).toMatchObject({
+      signatureColor: '#C44A3A',
+    })
+  })
+
+  it('restores an independent signature color', () => {
+    const saved = { ...DEFAULT_EDITOR_STATE, signatureColor: '#2A5B8D' }
+    expect(parseStoredState(JSON.stringify(saved))).toEqual(saved)
+  })
+
   it('clamps a saved signature size to the slider range', () => {
     const saved = { ...DEFAULT_EDITOR_STATE, signatureFontSize: 90 }
     expect(parseStoredState(JSON.stringify(saved))).toMatchObject({ signatureFontSize: 64 })
