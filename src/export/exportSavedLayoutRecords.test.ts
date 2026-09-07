@@ -17,6 +17,7 @@ it('exports saved layout records as readable JSON', async () => {
     id: 'record-1',
     name: '小红书封面模板',
     savedAt: 1784025600000,
+    favorite: true,
     state: DEFAULT_EDITOR_STATE,
   }
   const download = vi.fn()

@@ -88,7 +88,25 @@ export function TextStyleControls({
       />
       <ColorField label={`${name}颜色`} value={value.color} onChange={(color) => update({ color })} />
       <div className="text-position-group text-position-group--inline">
-        <span className="position-group-title">位置</span>
+        <div className="position-group-heading">
+          <span className="position-group-title">位置</span>
+          <div className="position-quick-actions">
+            <button
+              type="button"
+              aria-label={`${name}水平居中`}
+              onClick={() => onPositionChange({ ...position, x: 50 })}
+            >
+              水平居中
+            </button>
+            <button
+              type="button"
+              aria-label={`${name}垂直居中`}
+              onClick={() => onPositionChange({ ...position, y: 50 })}
+            >
+              垂直居中
+            </button>
+          </div>
+        </div>
         <PositionSlider
           label={`${name}左右位置`}
           value={position.x}

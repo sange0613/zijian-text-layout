@@ -27,6 +27,7 @@ export function parseSavedLayoutRecords(raw: string | null): SavedLayoutRecord[]
       .filter(isRecordShape)
       .map((record) => ({
         ...record,
+        favorite: record.favorite === true,
         state: parseStoredState(JSON.stringify(record.state)),
       }))
       .slice(0, MAX_SAVED_LAYOUT_RECORDS)
@@ -54,6 +55,7 @@ export function createSavedLayoutRecord(
     id: `${savedAt}-${Math.random().toString(36).slice(2, 8)}`,
     name: customName.trim() ? normalizeRecordName(customName) : getRecordName(state),
     savedAt,
+    favorite: false,
     state: JSON.parse(JSON.stringify(state)) as EditorState,
   }
 }

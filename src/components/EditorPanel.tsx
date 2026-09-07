@@ -33,6 +33,7 @@ type EditorPanelProps = {
   onSaveRecord: () => void
   onExportRecords: () => void
   onRenameRecord: (id: string, name: string) => void
+  onToggleFavoriteRecord: (id: string) => void
   onApplyRecord: (state: EditorState) => void
   onRemoveRecord: (id: string) => void
 }
@@ -54,6 +55,7 @@ export function EditorPanel({
   onSaveRecord,
   onExportRecords,
   onRenameRecord,
+  onToggleFavoriteRecord,
   onApplyRecord,
   onRemoveRecord,
 }: EditorPanelProps) {
@@ -240,6 +242,7 @@ export function EditorPanel({
           onSave={onSaveRecord}
           onExport={onExportRecords}
           onRename={onRenameRecord}
+          onToggleFavorite={onToggleFavoriteRecord}
           onApply={onApplyRecord}
           onRemove={onRemoveRecord}
         />

@@ -52,6 +52,7 @@ export type SavedLayoutRecord = {
   id: string
   name: string
   savedAt: number
+  favorite: boolean
   state: EditorState
 }
 

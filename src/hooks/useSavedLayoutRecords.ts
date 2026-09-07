@@ -41,5 +41,15 @@ export function useSavedLayoutRecords() {
     })
   }, [])
 
-  return { records, save, rename, remove }
+  const toggleFavorite = useCallback((id: string) => {
+    setRecords((current) => {
+      const next = current.map((record) =>
+        record.id === id ? { ...record, favorite: !record.favorite } : record,
+      )
+      localStorage.setItem(SAVED_LAYOUT_RECORDS_KEY, JSON.stringify(next))
+      return next
+    })
+  }, [])
+
+  return { records, save, rename, remove, toggleFavorite }
 }
