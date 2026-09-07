@@ -704,6 +704,20 @@ button:focus-visible {
   font-weight: 650;
 }
 
+.layout-preset-option-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.layout-preset-option-heading small {
+  flex: none;
+  color: #8a8a8a;
+  font-size: 9px;
+  font-weight: 600;
+}
+
 .layout-preset-option span {
   color: #8a8a8a;
   font-size: 10px;
@@ -717,6 +731,7 @@ button:focus-visible {
   color: #fff;
 }
 .layout-preset-option[aria-pressed='true'] span { color: #cfcfcf; }
+.layout-preset-option[aria-pressed='true'] small { color: #fff; }
 
 .color-field {
   display: grid;
@@ -1679,6 +1694,10 @@ button:not(:disabled):active {
 .layout-preset-option[aria-pressed='true'] span,
 .size-option[aria-pressed='true'] span {
   color: #57799f;
+}
+
+.layout-preset-option[aria-pressed='true'] small {
+  color: var(--accent);
 }
 
 .custom-size-form[data-active='true'] button,

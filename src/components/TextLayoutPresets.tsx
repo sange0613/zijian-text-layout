@@ -1,4 +1,5 @@
 import { TEXT_LAYOUT_PRESETS } from '../data/textLayoutPresets'
+import { FONT_BY_ID } from '../data/presets'
 
 type TextLayoutPresetsProps = {
   value: string
@@ -18,7 +19,10 @@ export function TextLayoutPresets({ value, onChange }: TextLayoutPresetsProps) {
             aria-pressed={value === preset.id}
             onClick={() => onChange(preset.id)}
           >
-            <strong>{preset.label}</strong>
+            <span className="layout-preset-option-heading">
+              <strong>{preset.label}</strong>
+              <small>{FONT_BY_ID.get(preset.titleStyle.fontId)?.label}</small>
+            </span>
             <span>{preset.rule}</span>
           </button>
         ))}

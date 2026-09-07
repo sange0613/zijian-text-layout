@@ -125,6 +125,9 @@ it('applies a pure text layout preset and still allows manual size tweaks', asyn
     fontWeight: '800',
   })
   expect(screen.getByTestId('preview-title').getAttribute('style')).toContain('Smiley Sans')
+  expect(screen.getByTestId('preview-body').getAttribute('style')).toContain('Smiley Sans')
+  expect(screen.getByLabelText('标题字体')).toHaveValue('smiley')
+  expect(screen.getByLabelText('正文字体')).toHaveValue('smiley')
 
   fireEvent.change(screen.getByRole('slider', { name: '标题字号' }), {
     target: { value: '104' },
