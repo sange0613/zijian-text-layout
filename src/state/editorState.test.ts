@@ -52,6 +52,11 @@ describe('editor presets', () => {
           preset.bodyPosition.y <= 100,
       ),
     ).toBe(true)
+    expect(
+      TEXT_LAYOUT_PRESETS.every(
+        (preset) => preset.titleStyle.fontId === preset.bodyStyle.fontId,
+      ),
+    ).toBe(true)
   })
 })
 

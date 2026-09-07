@@ -12,7 +12,7 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       color: '#111111',
     },
     bodyStyle: {
-      fontId: 'source-sans',
+      fontId: 'smiley',
       fontSize: 28,
       fontWeight: 500,
       color: '#4B4B4B',
@@ -50,7 +50,7 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       color: '#1F1D1A',
     },
     bodyStyle: {
-      fontId: 'source-sans',
+      fontId: 'source-serif',
       fontSize: 28,
       fontWeight: 400,
       color: '#4B4B4B',
@@ -88,7 +88,7 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       color: '#151515',
     },
     bodyStyle: {
-      fontId: 'source-sans',
+      fontId: 'huiwen-mincho',
       fontSize: 24,
       fontWeight: 400,
       color: '#4B4B4B',
@@ -107,7 +107,7 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       color: '#151515',
     },
     bodyStyle: {
-      fontId: 'source-sans',
+      fontId: 'smiley',
       fontSize: 30,
       fontWeight: 600,
       color: '#4B4B4B',
@@ -126,7 +126,7 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       color: '#151515',
     },
     bodyStyle: {
-      fontId: 'source-sans',
+      fontId: 'source-serif',
       fontSize: 25,
       fontWeight: 400,
       color: '#4B4B4B',
@@ -145,7 +145,7 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       color: '#151515',
     },
     bodyStyle: {
-      fontId: 'source-sans',
+      fontId: 'huiwen-mincho',
       fontSize: 24,
       fontWeight: 400,
       color: '#4B4B4B',
@@ -164,7 +164,7 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       color: '#151515',
     },
     bodyStyle: {
-      fontId: 'source-serif',
+      fontId: 'smiley',
       fontSize: 26,
       fontWeight: 400,
       color: '#4B4B4B',
@@ -183,7 +183,7 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
       color: '#151515',
     },
     bodyStyle: {
-      fontId: 'source-sans',
+      fontId: 'source-serif',
       fontSize: 25,
       fontWeight: 400,
       color: '#4B4B4B',
