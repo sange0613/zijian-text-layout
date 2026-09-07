@@ -134,6 +134,29 @@ export function CustomTextBlockControls({
             onChange={(color) => onUpdate(selected.id, { color })}
           />
           <div className="custom-text-position-grid">
+            <div className="position-group-heading">
+              <span className="position-group-title">位置</span>
+              <div className="position-quick-actions">
+                <button
+                  type="button"
+                  aria-label="自定义文字水平居中"
+                  onClick={() =>
+                    onUpdate(selected.id, { position: { ...selected.position, x: 50 } })
+                  }
+                >
+                  水平居中
+                </button>
+                <button
+                  type="button"
+                  aria-label="自定义文字垂直居中"
+                  onClick={() =>
+                    onUpdate(selected.id, { position: { ...selected.position, y: 50 } })
+                  }
+                >
+                  垂直居中
+                </button>
+              </div>
+            </div>
             <PositionSlider
               label="自定义文字左右位置"
               value={selected.position.x}

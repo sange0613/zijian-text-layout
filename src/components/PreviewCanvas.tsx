@@ -1,5 +1,13 @@
-import { forwardRef, useEffect, useRef, useState, type CSSProperties } from 'react'
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react'
 import { getCanvasSize } from '../canvas/getCanvasSize'
+import { getOverflowLabels } from '../canvas/getOverflowLabels'
 import { FONT_BY_ID } from '../data/presets'
 import type { BackgroundImageValue, EditorState, SignaturePosition } from '../types'
 
@@ -28,11 +36,15 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
   forwardedRef,
 ) {
   const stageRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(0.4)
+  const [overflowLabels, setOverflowLabels] = useState<string[]>([])
   const size = getCanvasSize(state)
   const titleFont = FONT_BY_ID.get(state.titleStyle.fontId)!
   const bodyFont = FONT_BY_ID.get(state.bodyStyle.fontId)!
   const signatureFont = FONT_BY_ID.get(state.signatureFontId)!
+
+  useImperativeHandle(forwardedRef, () => canvasRef.current as HTMLDivElement)
 
   useEffect(() => {
     const stage = stageRef.current
@@ -48,14 +60,47 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
     return () => observer.disconnect()
   }, [size.height, size.width])
 
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    let cancelled = false
+    const checkOverflow = () => {
+      if (cancelled) return
+      const elements = [...canvas.querySelectorAll<HTMLElement>('[data-overflow-label]')]
+      setOverflowLabels(
+        getOverflowLabels(
+          canvas.getBoundingClientRect(),
+          elements.map((element) => ({
+            label: element.dataset.overflowLabel ?? '文字',
+            rect: element.getBoundingClientRect(),
+          })),
+        ),
+      )
+    }
+    const frame = requestAnimationFrame(checkOverflow)
+    void document.fonts?.ready.then(checkOverflow)
+    window.addEventListener('resize', checkOverflow)
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(frame)
+      window.removeEventListener('resize', checkOverflow)
+    }
+  }, [scale, state])
+
   return (
     <section className="preview-stage" aria-label="排版预览" ref={stageRef}>
+      {overflowLabels.length ? (
+        <div className="preview-overflow-warning" role="status">
+          <span aria-hidden="true">!</span>
+          文字超出画布：{overflowLabels.join('、')}
+        </div>
+      ) : null}
       <div
         className="preview-sizer"
         style={{ width: size.width * scale, height: size.height * scale }}
       >
         <div
-          ref={forwardedRef}
+          ref={canvasRef}
           className="preview-canvas"
           data-testid="preview-canvas"
           data-export-canvas="true"
@@ -87,6 +132,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
             {state.title ? (
               <h2
                 data-testid="preview-title"
+                data-overflow-label="标题"
                 style={{
                   left: `${state.titlePosition.x}%`,
                   top: `${state.titlePosition.y}%`,
@@ -102,6 +148,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
             {state.body ? (
               <p
                 data-testid="preview-body"
+                data-overflow-label="正文"
                 style={{
                   left: `${state.bodyPosition.x}%`,
                   top: `${state.bodyPosition.y}%`,
@@ -119,6 +166,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
             <div
               className="preview-signature"
               data-testid="preview-signature"
+              data-overflow-label="署名"
               style={{
                 ...getSignaturePositionStyle(state.signaturePosition),
                 color: state.signatureColor,
@@ -137,6 +185,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
                 key={block.id}
                 className="preview-custom-text"
                 data-testid={`preview-custom-text-${block.id}`}
+                data-overflow-label="自定义文字"
                 style={{
                   left: `${block.position.x}%`,
                   top: `${block.position.y}%`,

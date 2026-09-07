@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { EditorPanel } from './components/EditorPanel'
 import { ExportButton } from './components/ExportButton'
 import { PreviewCanvas } from './components/PreviewCanvas'
@@ -16,9 +16,9 @@ import {
 import type { CustomTextBlock } from './types'
 
 export default function App() {
-  const { state, update } = usePersistedEditorState()
+  const { state, update, undo, redo, canUndo, canRedo } = usePersistedEditorState()
   const { backgroundImage, setBackgroundImage } = useSessionBackgroundImage()
-  const { records, save, rename, remove } = useSavedLayoutRecords()
+  const { records, save, rename, remove, toggleFavorite } = useSavedLayoutRecords()
   const [recordName, setRecordName] = useState('')
   const [justSaved, setJustSaved] = useState(false)
   const [selectedCustomTextId, setSelectedCustomTextId] = useState<string | null>(null)
@@ -27,6 +27,19 @@ export default function App() {
   const isEmpty =
     !state.title.trim() && !state.body.trim() && !state.signature.trim() && !hasCustomText
   const size = getCanvasSize(state)
+
+  useEffect(() => {
+    const handleHistoryShortcut = (event: KeyboardEvent) => {
+      if (!event.metaKey && !event.ctrlKey) return
+      const key = event.key.toLowerCase()
+      if (key !== 'z' && key !== 'y') return
+      event.preventDefault()
+      if (key === 'y' || event.shiftKey) redo()
+      else undo()
+    }
+    window.addEventListener('keydown', handleHistoryShortcut)
+    return () => window.removeEventListener('keydown', handleHistoryShortcut)
+  }, [redo, undo])
 
   const handleExport = async () => {
     if (!previewRef.current) throw new Error('Preview canvas is unavailable')
@@ -67,7 +80,33 @@ export default function App() {
     <div className="app-shell">
       <header className="topbar">
         <h1 aria-label="字间">字间 <span>· 排版工具</span></h1>
-        <ExportButton isEmpty={isEmpty} onExport={handleExport} />
+        <div className="topbar-actions">
+          <div className="history-controls" role="group" aria-label="编辑历史">
+            <button
+              type="button"
+              className="history-button"
+              aria-label="撤销"
+              title="撤销（⌘/Ctrl + Z）"
+              disabled={!canUndo}
+              onClick={undo}
+            >
+              <span aria-hidden="true">↶</span>
+              撤销
+            </button>
+            <button
+              type="button"
+              className="history-button"
+              aria-label="重做"
+              title="重做（⌘/Ctrl + Shift + Z）"
+              disabled={!canRedo}
+              onClick={redo}
+            >
+              <span aria-hidden="true">↷</span>
+              重做
+            </button>
+          </div>
+          <ExportButton isEmpty={isEmpty} onExport={handleExport} />
+        </div>
       </header>
       <main className="workspace">
         <EditorPanel
@@ -87,6 +126,7 @@ export default function App() {
           onSaveRecord={handleSaveRecord}
           onExportRecords={() => exportSavedLayoutRecords(records)}
           onRenameRecord={rename}
+          onToggleFavoriteRecord={toggleFavorite}
           onApplyRecord={(savedState) => {
             update(savedState)
             setSelectedCustomTextId(savedState.customTextBlocks[0]?.id ?? null)

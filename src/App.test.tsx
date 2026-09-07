@@ -163,6 +163,38 @@ it('moves the title and body independently with position sliders', () => {
   })
 })
 
+it('centers title and body with quick position actions', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  fireEvent.change(screen.getByRole('slider', { name: '标题左右位置' }), {
+    target: { value: '18' },
+  })
+  fireEvent.change(screen.getByRole('slider', { name: '正文上下位置' }), {
+    target: { value: '82' },
+  })
+  await user.click(screen.getByRole('button', { name: '标题水平居中' }))
+  await user.click(screen.getByRole('button', { name: '正文垂直居中' }))
+
+  expect(screen.getByTestId('preview-title')).toHaveStyle({ left: '50%' })
+  expect(screen.getByTestId('preview-body')).toHaveStyle({ top: '50%' })
+})
+
+it('undoes and redoes editor changes from the toolbar', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+  const title = screen.getByLabelText('标题内容')
+  const originalTitle = title.getAttribute('value') ?? (title as HTMLTextAreaElement).value
+
+  fireEvent.change(title, { target: { value: '可以撤销的标题' } })
+  expect(screen.getByRole('button', { name: '撤销' })).toBeEnabled()
+  await user.click(screen.getByRole('button', { name: '撤销' }))
+  expect(title).toHaveValue(originalTitle)
+
+  await user.click(screen.getByRole('button', { name: '重做' }))
+  expect(title).toHaveValue('可以撤销的标题')
+})
+
 it('adds multiple custom text blocks and moves the selected one', async () => {
   const user = userEvent.setup()
   render(<App />)
@@ -280,6 +312,27 @@ it('keeps saved layout records after the app is reopened and allows deletion', a
     screen.queryByRole('button', { name: '使用记录：下次继续' }),
   ).not.toBeInTheDocument()
   expect(screen.getByText('还没有保存记录')).toBeInTheDocument()
+})
+
+it('favorites saved records and filters them by name', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.type(screen.getByLabelText('保存记录名称'), '常用金句')
+  await user.click(screen.getByRole('button', { name: '保存当前记录' }))
+  await user.click(screen.getByRole('button', { name: '收藏记录：常用金句' }))
+  expect(screen.getByRole('button', { name: '取消收藏记录：常用金句' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+
+  await user.type(screen.getByLabelText('搜索保存记录'), '不存在')
+  expect(screen.getByText('没有找到匹配记录')).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: '使用记录：常用金句' })).not.toBeInTheDocument()
+
+  await user.clear(screen.getByLabelText('搜索保存记录'))
+  await user.type(screen.getByLabelText('搜索保存记录'), '金句')
+  expect(screen.getByRole('button', { name: '使用记录：常用金句' })).toBeInTheDocument()
 })
 
 it('disables export when both text fields are empty', async () => {
