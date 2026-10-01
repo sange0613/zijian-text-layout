@@ -125,7 +125,7 @@ export function CustomTextBlockControls({
             label="自定义文字字号"
             value={selected.fontSize}
             min={12}
-            max={120}
+            max={2000}
             onChange={(fontSize) => onUpdate(selected.id, { fontSize })}
           />
           <ColorField

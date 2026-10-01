@@ -63,7 +63,7 @@ function isTextStyle(value: unknown): value is TextStyle {
     typeof style.fontSize === 'number' &&
     Number.isFinite(style.fontSize) &&
     style.fontSize >= 12 &&
-    style.fontSize <= 240 &&
+    style.fontSize <= 2000 &&
     typeof style.fontWeight === 'number' &&
     [400, 500, 600, 700, 800, 900].includes(style.fontWeight) &&
     typeof style.color === 'string' &&
@@ -101,7 +101,7 @@ function isCustomTextBlock(value: unknown): value is CustomTextBlock {
     typeof block.fontSize === 'number' &&
     Number.isFinite(block.fontSize) &&
     block.fontSize >= 12 &&
-    block.fontSize <= 160 &&
+    block.fontSize <= 2000 &&
     typeof block.fontWeight === 'number' &&
     [400, 500, 600, 700, 800, 900].includes(block.fontWeight) &&
     typeof block.color === 'string' &&
@@ -134,7 +134,7 @@ function isEditorState(value: unknown): value is EditorState {
     typeof state.signatureFontSize === 'number' &&
     Number.isFinite(state.signatureFontSize) &&
     state.signatureFontSize >= 12 &&
-    state.signatureFontSize <= 240 &&
+    state.signatureFontSize <= 2000 &&
     typeof state.signatureColor === 'string' &&
     HEX_COLOR.test(state.signatureColor) &&
     isTextStyle(state.titleStyle) &&
@@ -165,7 +165,7 @@ export function parseStoredState(raw: string | null): EditorState {
       'fontSize' in value.bodyStyle &&
       typeof value.bodyStyle.fontSize === 'number' &&
       Number.isFinite(value.bodyStyle.fontSize)
-        ? clamp(value.bodyStyle.fontSize, 12, 80)
+        ? clamp(value.bodyStyle.fontSize, 12, 2000)
         : DEFAULT_EDITOR_STATE.bodyStyle.fontSize
     const legacyBodyColor =
       value &&
@@ -223,11 +223,11 @@ export function parseStoredState(raw: string | null): EditorState {
       ...candidate,
       titleStyle: {
         ...candidate.titleStyle,
-        fontSize: clamp(candidate.titleStyle.fontSize, 24, 160),
+        fontSize: clamp(candidate.titleStyle.fontSize, 24, 2000),
       },
       bodyStyle: {
         ...candidate.bodyStyle,
-        fontSize: clamp(candidate.bodyStyle.fontSize, 12, 80),
+        fontSize: clamp(candidate.bodyStyle.fontSize, 12, 2000),
       },
       titlePosition: {
         x: clamp(candidate.titlePosition.x, 0, 100),
@@ -240,13 +240,13 @@ export function parseStoredState(raw: string | null): EditorState {
       customTextBlocks: candidate.customTextBlocks.slice(0, 12).map((block) => ({
         ...block,
         text: block.text.slice(0, 200),
-        fontSize: clamp(block.fontSize, 12, 120),
+        fontSize: clamp(block.fontSize, 12, 2000),
         position: {
           x: clamp(block.position.x, 0, 100),
           y: clamp(block.position.y, 0, 100),
         },
       })),
-      signatureFontSize: clamp(candidate.signatureFontSize, 12, 64),
+      signatureFontSize: clamp(candidate.signatureFontSize, 12, 2000),
       customWidth: Math.round(clamp(candidate.customWidth, 320, 4096)),
       customHeight: Math.round(clamp(candidate.customHeight, 320, 4096)),
     }

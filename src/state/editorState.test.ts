@@ -201,9 +201,9 @@ describe('parseStoredState', () => {
     expect(parseStoredState(JSON.stringify(saved))).toEqual(saved)
   })
 
-  it('clamps a saved signature size to the slider range', () => {
-    const saved = { ...DEFAULT_EDITOR_STATE, signatureFontSize: 90 }
-    expect(parseStoredState(JSON.stringify(saved))).toMatchObject({ signatureFontSize: 64 })
+  it('restores a 2000px signature size', () => {
+    const saved = { ...DEFAULT_EDITOR_STATE, signatureFontSize: 2000 }
+    expect(parseStoredState(JSON.stringify(saved))).toMatchObject({ signatureFontSize: 2000 })
   })
 
   it('rejects an unknown signature font', () => {
@@ -216,16 +216,18 @@ describe('parseStoredState', () => {
     expect(parseStoredState(JSON.stringify(saved))).toEqual(DEFAULT_EDITOR_STATE)
   })
 
-  it('clamps legacy font sizes to the slider ranges', () => {
+  it('restores 2000px title, body and custom text sizes', () => {
     const saved = {
       ...DEFAULT_EDITOR_STATE,
-      titleStyle: { ...DEFAULT_EDITOR_STATE.titleStyle, fontSize: 200 },
-      bodyStyle: { ...DEFAULT_EDITOR_STATE.bodyStyle, fontSize: 120 },
+      titleStyle: { ...DEFAULT_EDITOR_STATE.titleStyle, fontSize: 2000 },
+      bodyStyle: { ...DEFAULT_EDITOR_STATE.bodyStyle, fontSize: 2000 },
+      customTextBlocks: [{ id: 'large', text: '大字', ...DEFAULT_EDITOR_STATE.bodyStyle, fontSize: 2000, position: { x: 50, y: 50 } }],
     }
 
     expect(parseStoredState(JSON.stringify(saved))).toMatchObject({
-      titleStyle: { fontSize: 160 },
-      bodyStyle: { fontSize: 80 },
+      titleStyle: { fontSize: 2000 },
+      bodyStyle: { fontSize: 2000 },
+      customTextBlocks: [{ fontSize: 2000 }],
     })
   })
 })

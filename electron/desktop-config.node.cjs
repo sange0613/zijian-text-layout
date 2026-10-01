@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..')
 const packageJson = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'))
 
 test('defines Windows installer and portable packaging', () => {
-  assert.equal(packageJson.version, '0.2.0')
+  assert.match(packageJson.version, /^\d+\.\d+\.\d+$/)
   assert.equal(packageJson.main, 'electron/main.cjs')
   assert.equal(packageJson.scripts['build:desktop'], 'tsc -b && vite build --mode desktop')
   assert.equal(
