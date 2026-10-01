@@ -83,7 +83,7 @@ export function TextStyleControls({
         label={`${name}字号`}
         value={value.fontSize}
         min={name === '标题' ? 24 : 12}
-        max={name === '标题' ? 160 : 80}
+        max={2000}
         onChange={(fontSize) => update({ fontSize })}
       />
       <ColorField label={`${name}颜色`} value={value.color} onChange={(color) => update({ color })} />

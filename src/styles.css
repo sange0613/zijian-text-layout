@@ -519,7 +519,7 @@ button:focus-visible {
 
 .font-size-slider {
   display: grid;
-  grid-template-columns: 54px minmax(0, 1fr) 42px;
+  grid-template-columns: 54px minmax(0, 1fr) 56px;
   align-items: center;
   gap: 7px;
   margin-top: 8px;

@@ -157,7 +157,7 @@ export function EditorPanel({
               label="署名字号"
               value={state.signatureFontSize}
               min={12}
-              max={64}
+              max={2000}
               onChange={(signatureFontSize) => onChange({ signatureFontSize })}
             />
           </div>
