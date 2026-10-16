@@ -211,4 +211,4 @@ Expected: the Pages workflow completes successfully.
 
 - [ ] **Step 5: Verify public deployment**
 
-Open `https://sange1022.github.io/zijian-text-layout/`, confirm the new controls are present after upload, position changes render, and background-image export succeeds.
+Open `https://sange0613.github.io/zijian-text-layout/`, confirm the new controls are present after upload, position changes render, and background-image export succeeds.

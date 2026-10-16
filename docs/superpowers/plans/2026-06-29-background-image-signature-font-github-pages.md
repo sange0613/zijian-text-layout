@@ -538,7 +538,7 @@ If it does not exist, run:
 
 ```bash
 gh repo create sange1022/zijian-text-layout --public --description "简洁的中文文字排版与海报图片生成工具"
-git remote add origin https://github.com/sange1022/zijian-text-layout.git
+git remote add origin https://github.com/sange0613/zijian-text-layout.git
 ```
 
 If it already exists and is owned by `sange1022`, add or update `origin` to the same HTTPS URL without deleting remote content.
@@ -577,7 +577,7 @@ Expected: workflow concludes `success`.
 
 - [ ] **Step 5: Verify the public link**
 
-Open `https://sange1022.github.io/zijian-text-layout/` in the in-app Browser. Confirm HTTP page identity, meaningful DOM, no framework overlay, no console errors, background upload/remove, signature font menu, six positions, and PNG button availability. Capture one public-site screenshot.
+Open `https://sange0613.github.io/zijian-text-layout/` in the in-app Browser. Confirm HTTP page identity, meaningful DOM, no framework overlay, no console errors, background upload/remove, signature font menu, six positions, and PNG button availability. Capture one public-site screenshot.
 
 - [ ] **Step 6: Report the usable URL**
 

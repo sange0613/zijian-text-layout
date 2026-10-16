@@ -289,4 +289,4 @@ Expected: push succeeds and the Pages deployment workflow completes successfully
 
 - [ ] **Step 6: Verify the public site**
 
-Open `https://sange1022.github.io/zijian-text-layout/`, confirm the new slider behavior, and confirm `https://sange1022.github.io/zijian-text-layout/fonts/huiwen-mincho.woff2` returns HTTP 200.
+Open `https://sange0613.github.io/zijian-text-layout/`, confirm the new slider behavior, and confirm `https://sange0613.github.io/zijian-text-layout/fonts/huiwen-mincho.woff2` returns HTTP 200.

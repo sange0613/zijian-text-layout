@@ -74,7 +74,7 @@ CSS 优先使用 `local('Huiwen-mincho')` 和 `local('汇文明朝体')`，未�
 - 公开仓库 `sange1022/zijian-text-layout` 提交完整源码和经用户授权的汇文明朝体 WOFF2，不提交原始 OTF、上传图片或其他个人数据。
 - 使用 GitHub Actions 在 `main` 分支更新后自动执行安装、测试、生产构建和 GitHub Pages 部署。
 - Vite 生产构建使用仓库子路径 `/zijian-text-layout/`，本地开发仍使用根路径，确保脚本、样式和得意黑字体资源在 Pages 中可加载。
-- 预期公开地址为 `https://sange1022.github.io/zijian-text-layout/`。
+- 预期公开地址为 `https://sange0613.github.io/zijian-text-layout/`。
 - 首次发布后检查 Actions 状态，并在公开链接验证页面加载、背景图上传、署名位置、字体选择和 PNG 下载。
 
 ## 范围外
