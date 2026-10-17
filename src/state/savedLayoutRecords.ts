@@ -60,7 +60,7 @@ function isRecordShape(value: unknown): value is SavedLayoutRecord {
   )
 }
 
-export function parseSavedLayoutRecords(raw: string | null): SavedLayoutRecord[] {
+export function parseSavedLayoutRecords(raw: string | null, limit = MAX_SAVED_LAYOUT_RECORDS): SavedLayoutRecord[] {
   if (!raw) return []
   try {
     const value: unknown = JSON.parse(raw)
@@ -72,7 +72,7 @@ export function parseSavedLayoutRecords(raw: string | null): SavedLayoutRecord[]
         favorite: record.favorite === true,
         state: parseStoredState(JSON.stringify(record.state)),
       }))
-      .slice(0, MAX_SAVED_LAYOUT_RECORDS)
+      .slice(0, limit)
   } catch {
     return []
   }

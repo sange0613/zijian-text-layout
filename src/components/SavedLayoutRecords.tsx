@@ -72,7 +72,7 @@ export function SavedLayoutRecords({
     <fieldset className="settings-section saved-layout-records">
       <legend>保存记录</legend>
       <div className="saved-records-heading">
-        <span>保存在当前浏览器</span>
+        <span>{window.self !== window.top ? '模板随项目同步码同步' : '保存在当前浏览器'}</span>
         <div className="saved-records-file-actions">
         <input
           ref={importInputRef}
