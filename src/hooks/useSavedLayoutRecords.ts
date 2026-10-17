@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import {
   createSavedLayoutRecord,
+  importSavedLayoutRecords,
   MAX_SAVED_LAYOUT_RECORDS,
   parseSavedLayoutRecords,
   SAVED_LAYOUT_RECORDS_KEY,
@@ -51,5 +52,12 @@ export function useSavedLayoutRecords() {
     })
   }, [])
 
-  return { records, save, rename, remove, toggleFavorite }
+  const importRecords = useCallback((raw: string) => {
+    const result = importSavedLayoutRecords(raw, records)
+    localStorage.setItem(SAVED_LAYOUT_RECORDS_KEY, JSON.stringify(result.records))
+    setRecords(result.records)
+    return { imported: result.imported, skipped: result.skipped }
+  }, [records])
+
+  return { records, save, rename, remove, toggleFavorite, importRecords }
 }

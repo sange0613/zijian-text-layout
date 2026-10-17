@@ -273,6 +273,10 @@ button { color: inherit; }
   font-size: 11px;
 }
 
+.saved-records-file-actions { display: flex; gap: 5px; }
+.import-record-status { margin: 8px 0 0; color: #248044; font-size: 11px; line-height: 1.5; }
+.import-record-status--error { color: #d70015; }
+
 .saved-record-save-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 58px;

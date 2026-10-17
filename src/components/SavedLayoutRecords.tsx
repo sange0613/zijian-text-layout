@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { TEXT_LAYOUT_BY_ID } from '../data/textLayoutPresets'
 import type { EditorState, SavedLayoutRecord } from '../types'
 
@@ -9,6 +9,7 @@ type SavedLayoutRecordsProps = {
   onRecordNameChange: (name: string) => void
   onSave: () => void
   onExport: () => void
+  onImport: (raw: string) => { imported: number; skipped: number }
   onRename: (id: string, name: string) => void
   onToggleFavorite: (id: string) => void
   onApply: (state: EditorState) => void
@@ -22,12 +23,40 @@ export function SavedLayoutRecords({
   onRecordNameChange,
   onSave,
   onExport,
+  onImport,
   onRename,
   onToggleFavorite,
   onApply,
   onRemove,
 }: SavedLayoutRecordsProps) {
   const [searchQuery, setSearchQuery] = useState('')
+  const importInputRef = useRef<HTMLInputElement>(null)
+  const [importStatus, setImportStatus] = useState('')
+  const [importError, setImportError] = useState(false)
+  const [importing, setImporting] = useState(false)
+
+  const handleImport = async (file: File) => {
+    setImporting(true)
+    setImportStatus('')
+    setImportError(false)
+    try {
+      if (file.size > 5 * 1024 * 1024) throw new Error('记录文件不能超过 5MB')
+      const raw = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(String(reader.result))
+        reader.onerror = () => reject(new Error('无法读取文件，请重新选择'))
+        reader.readAsText(file)
+      })
+      const result = onImport(raw)
+      setSearchQuery('')
+      setImportStatus(`已导入 ${result.imported} 条记录${result.skipped ? `，跳过 ${result.skipped} 条重复记录` : ''}`)
+    } catch (error) {
+      setImportError(true)
+      setImportStatus(error instanceof Error ? error.message : '导入失败，请重新选择文件')
+    } finally {
+      setImporting(false)
+    }
+  }
   const visibleRecords = useMemo(() => {
     const query = searchQuery.trim().toLocaleLowerCase('zh-CN')
     return [...records]
@@ -44,6 +73,28 @@ export function SavedLayoutRecords({
       <legend>保存记录</legend>
       <div className="saved-records-heading">
         <span>保存在当前浏览器</span>
+        <div className="saved-records-file-actions">
+        <input
+          ref={importInputRef}
+          type="file"
+          accept=".json,application/json"
+          aria-label="选择记录文件"
+          className="visually-hidden"
+          tabIndex={-1}
+          onChange={(event) => {
+            const file = event.target.files?.[0]
+            event.target.value = ''
+            if (file) void handleImport(file)
+          }}
+        />
+        <button
+          className="export-records-button"
+          type="button"
+          disabled={importing}
+          onClick={() => importInputRef.current?.click()}
+        >
+          {importing ? '导入中…' : '导入记录'}
+        </button>
         <button
           className="export-records-button"
           type="button"
@@ -52,7 +103,13 @@ export function SavedLayoutRecords({
         >
           导出记录
         </button>
+        </div>
       </div>
+      {importStatus ? (
+        <p className={`import-record-status${importError ? ' import-record-status--error' : ''}`} role={importError ? 'alert' : 'status'}>
+          {importStatus}
+        </p>
+      ) : null}
       <div className="saved-record-save-row">
         <label className="saved-record-name-field">
           <span>记录名</span>

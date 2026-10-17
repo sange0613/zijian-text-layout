@@ -1,7 +1,23 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, it, vi } from 'vitest'
 import App from './App'
+import { DEFAULT_EDITOR_STATE } from './state/editorState'
+import { createSavedLayoutRecord } from './state/savedLayoutRecords'
+
+it('imports an exported record file and applies its saved text', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+  const record = createSavedLayoutRecord({ ...DEFAULT_EDITOR_STATE, title: '文件中的文字' }, '导入模板')
+  const file = new File([
+    JSON.stringify({ app: 'zijian-text-layout', version: 1, records: [record] }),
+  ], '记录.json', { type: 'application/json' })
+  expect(screen.getByRole('button', { name: '导入记录' })).toBeEnabled()
+  await user.upload(screen.getByLabelText('选择记录文件'), file)
+  await waitFor(() => expect(screen.getByText('已导入 1 条记录')).toBeInTheDocument())
+  await user.click(screen.getByRole('button', { name: '使用记录：导入模板' }))
+  expect(screen.getByLabelText('标题内容')).toHaveValue('文件中的文字')
+})
 
 vi.mock('./background/prepareBackgroundImage', () => ({
   prepareBackgroundImage: vi.fn(async (file: File) => ({

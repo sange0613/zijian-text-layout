@@ -18,7 +18,7 @@ import type { CustomTextBlock } from './types'
 export default function App() {
   const { state, update, undo, redo, canUndo, canRedo } = usePersistedEditorState()
   const { backgroundImage, setBackgroundImage } = useSessionBackgroundImage()
-  const { records, save, rename, remove, toggleFavorite } = useSavedLayoutRecords()
+  const { records, save, rename, remove, toggleFavorite, importRecords } = useSavedLayoutRecords()
   const [recordName, setRecordName] = useState('')
   const [justSaved, setJustSaved] = useState(false)
   const [selectedCustomTextId, setSelectedCustomTextId] = useState<string | null>(null)
@@ -125,6 +125,7 @@ export default function App() {
           onRecordNameChange={setRecordName}
           onSaveRecord={handleSaveRecord}
           onExportRecords={() => exportSavedLayoutRecords(records)}
+          onImportRecords={importRecords}
           onRenameRecord={rename}
           onToggleFavoriteRecord={toggleFavorite}
           onApplyRecord={(savedState) => {
