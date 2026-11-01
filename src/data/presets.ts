@@ -29,6 +29,16 @@ export const FONT_PRESETS: FontPreset[] = [
     fallback: 'Songti SC, STSong, serif',
     usage: '复古 · 海报',
   },
+  { id: 'qiji-combo', label: '黄令东齐伋复刻', family: 'Zijian Qiji', fallback: 'Songti SC, STSong, serif', usage: '古籍 · 简映繁' },
+  { id: 'kinghwa-oldsong', label: '京華老宋体', family: 'Zijian KingHwa', fallback: 'Songti SC, STSong, serif', usage: '铅印 · 复古' },
+  { id: 'chill-fangsong', label: '寒蝉活仿宋', family: 'Zijian Chill Fangsong', fallback: 'FangSong, STSong, serif', usage: '书卷 · 仿宋' },
+  { id: 'dream-serif', label: '梦源宋体', family: 'Zijian Dream Serif', fallback: 'Songti SC, STSong, serif', usage: '清雅 · 正文' },
+  { id: 'zhuque-fangsong', label: '朱雀仿宋', family: 'Zijian Zhuque', fallback: 'FangSong, STSong, serif', usage: '古典 · 仿宋' },
+  { id: 'danya-mincho', label: '澹雅明体', family: 'Zijian Danya', fallback: 'Songti SC, STSong, serif', usage: '淡雅 · 繁体' },
+  { id: 'genwan-mincho', label: '源雲明朝', family: 'Zijian GenWan', fallback: 'Songti SC, STSong, serif', usage: '温润 · 印刷' },
+  { id: 'jyunsai-kaai', label: '芫茜雅楷', family: 'Zijian Jyunsai', fallback: 'Kaiti SC, KaiTi, serif', usage: '港式 · 雅楷' },
+  { id: 'nano-oldsong-a', label: '纳米老宋-A', family: 'Zijian Nano OldSong', fallback: 'Songti SC, STSong, serif', usage: '老字 · 复古' },
+  { id: 'siyin-song', label: '思印宋', family: 'Zijian Siyin', fallback: 'Songti SC, STSong, serif', usage: '拓印 · 宋体' },
 ]
 
 export const SIZE_PRESETS: SizePreset[] = [

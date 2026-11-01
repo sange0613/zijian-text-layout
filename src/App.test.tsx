@@ -129,6 +129,23 @@ it('updates title typography independently', async () => {
   expect(screen.getByTestId('preview-body').getAttribute('style')).not.toContain('Smiley Sans')
 })
 
+it('uses the bundled poster fonts for every text type and restores them after reopening', async () => {
+  const user = userEvent.setup()
+  const view = render(<App />)
+  await user.selectOptions(screen.getByLabelText('标题字体'), 'qiji-combo')
+  await user.selectOptions(screen.getByLabelText('正文字体'), 'zhuque-fangsong')
+  await user.selectOptions(screen.getByLabelText('署名字体'), 'nano-oldsong-a')
+  await user.click(screen.getByRole('button', { name: '添加文字' }))
+  await user.selectOptions(screen.getByLabelText('自定义文字字体'), 'siyin-song')
+  view.unmount()
+  render(<App />)
+  expect(screen.getByLabelText('标题字体')).toHaveValue('qiji-combo')
+  expect(screen.getByLabelText('正文字体')).toHaveValue('zhuque-fangsong')
+  expect(screen.getByLabelText('署名字体')).toHaveValue('nano-oldsong-a')
+  expect(screen.getByLabelText('自定义文字字体')).toHaveValue('siyin-song')
+  expect(screen.getByTestId('preview-title').getAttribute('style')).toContain('Zijian Qiji')
+})
+
 it('applies a pure text layout preset and still allows manual size tweaks', async () => {
   const user = userEvent.setup()
   render(<App />)

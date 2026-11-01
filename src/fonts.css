@@ -18,3 +18,16 @@
   font-style: normal;
   font-weight: 400;
 }
+
+/* Font files are served with the app and fetched only when a family is used.
+   Attribution, original sources and complete terms: /fonts/licenses/README.md. */
+@font-face { font-family: 'Zijian Qiji'; src: url('/fonts/qiji-combo.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Zijian KingHwa'; src: url('/fonts/kinghwa-oldsong.ttf') format('truetype'); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Zijian Chill Fangsong'; src: url('/fonts/chill-fangsong.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Zijian Dream Serif'; src: url('/fonts/dream-serif.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Zijian Zhuque'; src: url('/fonts/zhuque-fangsong.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Zijian Danya'; src: url('/fonts/danya-mincho.ttf') format('truetype'); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Zijian GenWan'; src: url('/fonts/genwan-mincho.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Zijian Jyunsai'; src: url('/fonts/jyunsai-kaai.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Zijian Nano OldSong'; src: url('/fonts/nano-oldsong-a.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Zijian Siyin'; src: url('/fonts/siyin-song.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
