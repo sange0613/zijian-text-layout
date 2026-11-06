@@ -150,6 +150,7 @@ it('applies a pure text layout preset and still allows manual size tweaks', asyn
   const user = userEvent.setup()
   render(<App />)
 
+  await user.click(screen.getByRole('button', { name: '纯文字排版' }))
   await user.click(screen.getByRole('button', { name: /标题压底/ }))
 
   expect(screen.getByTestId('preview-canvas')).toHaveAttribute('data-layout', 'number-focus')
@@ -168,6 +169,25 @@ it('applies a pure text layout preset and still allows manual size tweaks', asyn
 
   expect(screen.getByTestId('preview-title')).toHaveStyle({ fontSize: '104px' })
   expect(screen.getByTestId('preview-canvas')).toHaveAttribute('data-layout', 'number-focus')
+})
+
+it('applies a photo composition, keeps the uploaded image and allows independent typography adjustments', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+  await user.upload(screen.getByLabelText('上传背景图'), new File(['image'], 'photo.jpg', { type: 'image/jpeg' }))
+  fireEvent.change(screen.getByRole('slider', { name: '背景图左右位置' }), { target: { value: '25' } })
+  await user.click(screen.getByRole('button', { name: /左文右图/ }))
+  expect(screen.getByTestId('preview-image-frame')).toHaveStyle({ left: '46%', width: '54%' })
+  expect(screen.getByTestId('preview-background-image')).toHaveStyle({ objectPosition: '25% 50%' })
+  expect(screen.getByTestId('preview-title')).toHaveStyle({ width: '32%', textAlign: 'left' })
+  await user.click(screen.getByRole('button', { name: '标题右对齐' }))
+  fireEvent.change(screen.getByRole('slider', { name: '标题文字宽度' }), { target: { value: '38' } })
+  expect(screen.getByTestId('preview-title')).toHaveStyle({ width: '38%', textAlign: 'right' })
+  await user.click(screen.getByRole('button', { name: /底部压字/ }))
+  expect(screen.getByTestId('preview-title')).toHaveStyle({ color: '#FFFFFF' })
+  expect(screen.getByTestId('preview-image-frame')).toHaveStyle({ left: '0%', width: '100%' })
+  expect(screen.getByLabelText('标题字体')).toHaveValue('smiley')
+  expect(screen.getByLabelText('正文字体')).toHaveValue('smiley')
 })
 
 it('moves the title and body independently with position sliders', () => {
@@ -271,6 +291,7 @@ it('saves the current text and layout as a reusable local record', async () => {
   await user.type(screen.getByLabelText('保存记录名称'), '我的收藏模板')
   await user.clear(screen.getByLabelText('标题内容'))
   await user.type(screen.getByLabelText('标题内容'), '我的常用排版')
+  await user.click(screen.getByRole('button', { name: '纯文字排版' }))
   await user.click(screen.getByRole('button', { name: /标题压底/ }))
   fireEvent.change(screen.getByRole('slider', { name: '标题字号' }), {
     target: { value: '104' },

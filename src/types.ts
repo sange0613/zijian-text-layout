@@ -3,6 +3,9 @@ export type TextStyle = {
   fontSize: number
   fontWeight: number
   color: string
+  widthPercent?: number
+  textAlign?: 'left' | 'center' | 'right'
+  lineHeight?: number
 }
 
 export type TextBlockPosition = {
@@ -89,4 +92,12 @@ export type TextLayoutPreset = {
   bodyStyle: TextStyle
   titlePosition: TextBlockPosition
   bodyPosition: TextBlockPosition
+  photo?: {
+    frame: { x: number; y: number; width: number; height: number }
+    paper: string
+    overlays: { x: number; y: number; width: number; height: number; background: string }[]
+    signaturePosition: SignaturePosition
+    signatureColor: string
+    category: string
+  }
 }

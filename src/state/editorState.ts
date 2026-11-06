@@ -67,7 +67,10 @@ function isTextStyle(value: unknown): value is TextStyle {
     typeof style.fontWeight === 'number' &&
     [400, 500, 600, 700, 800, 900].includes(style.fontWeight) &&
     typeof style.color === 'string' &&
-    HEX_COLOR.test(style.color)
+    HEX_COLOR.test(style.color) &&
+    (style.widthPercent === undefined || (typeof style.widthPercent === 'number' && Number.isFinite(style.widthPercent) && style.widthPercent >= 10 && style.widthPercent <= 100)) &&
+    (style.textAlign === undefined || ['left', 'center', 'right'].includes(String(style.textAlign))) &&
+    (style.lineHeight === undefined || (typeof style.lineHeight === 'number' && Number.isFinite(style.lineHeight) && style.lineHeight >= 0.8 && style.lineHeight <= 3))
   )
 }
 

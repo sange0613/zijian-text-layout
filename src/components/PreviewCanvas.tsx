@@ -9,6 +9,7 @@ import {
 import { getCanvasSize } from '../canvas/getCanvasSize'
 import { getOverflowLabels } from '../canvas/getOverflowLabels'
 import { FONT_BY_ID } from '../data/presets'
+import { TEXT_LAYOUT_BY_ID } from '../data/textLayoutPresets'
 import type { BackgroundImageValue, EditorState, SignaturePosition } from '../types'
 
 type PreviewCanvasProps = {
@@ -43,6 +44,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
   const titleFont = FONT_BY_ID.get(state.titleStyle.fontId)!
   const bodyFont = FONT_BY_ID.get(state.bodyStyle.fontId)!
   const signatureFont = FONT_BY_ID.get(state.signatureFontId)!
+  const photo = TEXT_LAYOUT_BY_ID.get(state.textLayoutId)?.photo
 
   useImperativeHandle(forwardedRef, () => canvasRef.current as HTMLDivElement)
 
@@ -89,6 +91,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
 
   return (
     <section className="preview-stage" aria-label="排版预览" ref={stageRef}>
+      {photo && !backgroundImage ? <div className="preview-template-hint">上传背景图，即可套用当前构图</div> : null}
       {overflowLabels.length ? (
         <div className="preview-overflow-warning" role="status">
           <span aria-hidden="true">!</span>
@@ -113,7 +116,12 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
             transform: `scale(${scale})`,
           }}
         >
-          {backgroundImage ? (
+          {backgroundImage || photo ? (
+            <div className="preview-image-frame" data-testid="preview-image-frame" style={photo ? {
+              left: `${photo.frame.x}%`, top: `${photo.frame.y}%`, width: `${photo.frame.width}%`, height: `${photo.frame.height}%`,
+              background: backgroundImage ? undefined : '#9FAFA5',
+            } : undefined}>
+            {backgroundImage ? (
             <img
               className="preview-background-image"
               data-testid="preview-background-image"
@@ -127,8 +135,15 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
               alt=""
               aria-hidden="true"
             />
+            ) : null}
+            </div>
           ) : null}
-          <div className={`preview-content preview-content--${state.textLayoutId}`}>
+          {photo?.overlays.map((overlay, index) => (
+            <div key={index} className="preview-photo-overlay" aria-hidden="true" style={{
+              left: `${overlay.x}%`, top: `${overlay.y}%`, width: `${overlay.width}%`, height: `${overlay.height}%`, background: overlay.background,
+            }} />
+          ))}
+          <div className={`preview-content preview-content--${state.textLayoutId}${photo ? ' preview-content--photo' : ''}`}>
             {state.title ? (
               <h2
                 data-testid="preview-title"
@@ -140,6 +155,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
                   fontFamily: `'${titleFont.family}', ${titleFont.fallback}`,
                   fontSize: state.titleStyle.fontSize,
                   fontWeight: state.titleStyle.fontWeight,
+                  ...(photo ? { width: `${state.titleStyle.widthPercent ?? 82}%`, maxWidth: 'none', textAlign: state.titleStyle.textAlign ?? 'left', lineHeight: state.titleStyle.lineHeight ?? 1.45, margin: 0 } : {}),
                 }}
               >
                 {state.title}
@@ -156,6 +172,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
                   fontFamily: `'${bodyFont.family}', ${bodyFont.fallback}`,
                   fontSize: state.bodyStyle.fontSize,
                   fontWeight: state.bodyStyle.fontWeight,
+                  ...(photo ? { width: `${state.bodyStyle.widthPercent ?? 80}%`, maxWidth: 'none', textAlign: state.bodyStyle.textAlign ?? 'left', lineHeight: state.bodyStyle.lineHeight ?? 1.6, margin: 0 } : {}),
                 }}
               >
                 {state.body}

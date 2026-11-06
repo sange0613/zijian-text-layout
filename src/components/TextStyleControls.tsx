@@ -87,6 +87,16 @@ export function TextStyleControls({
         onChange={(fontSize) => update({ fontSize })}
       />
       <ColorField label={`${name}颜色`} value={value.color} onChange={(color) => update({ color })} />
+      {value.widthPercent !== undefined ? (
+        <div className="text-composition-controls">
+          <div className="text-alignment-buttons" role="group" aria-label={`${name}对齐方式`}>
+            {([['left', '左对齐'], ['center', '居中'], ['right', '右对齐']] as const).map(([align, label]) => (
+              <button key={align} type="button" aria-label={`${name}${label}`} aria-pressed={value.textAlign === align} onClick={() => update({ textAlign: align })}>{label}</button>
+            ))}
+          </div>
+          <PositionSlider label={`${name}文字宽度`} value={value.widthPercent} onChange={(width) => update({ widthPercent: Math.max(10, width) })} />
+        </div>
+      ) : null}
       <div className="text-position-group text-position-group--inline">
         <div className="position-group-heading">
           <span className="position-group-title">位置</span>

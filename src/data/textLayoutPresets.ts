@@ -1,4 +1,6 @@
 import type { EditorState, TextLayoutPreset } from '../types'
+import { PHOTO_LAYOUT_PRESETS } from './photoLayoutPresets'
+import { getCanvasSize } from '../canvas/getCanvasSize'
 
 export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
   {
@@ -194,7 +196,7 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
 ]
 
 export const TEXT_LAYOUT_BY_ID = new Map(
-  TEXT_LAYOUT_PRESETS.map((preset) => [preset.id, preset]),
+  [...TEXT_LAYOUT_PRESETS, ...PHOTO_LAYOUT_PRESETS].map((preset) => [preset.id, preset]),
 )
 
 export const DEFAULT_TEXT_LAYOUT_ID = TEXT_LAYOUT_PRESETS[0].id
@@ -204,17 +206,28 @@ export function createTextLayoutPatch(
   current?: EditorState,
 ): Partial<EditorState> {
   const preset = TEXT_LAYOUT_BY_ID.get(presetId) ?? TEXT_LAYOUT_PRESETS[0]
+  const size = current ? getCanvasSize(current) : undefined
+  const wasPhoto = current ? Boolean(TEXT_LAYOUT_BY_ID.get(current.textLayoutId)?.photo) : false
+  const scale = preset.photo && size ? Math.min(size.width / 1242, size.height / 1656) : 1
   return {
     textLayoutId: preset.id,
     titleStyle: {
       ...preset.titleStyle,
-      color: current?.titleStyle.color ?? preset.titleStyle.color,
+      fontSize: Math.max(24, Math.min(2000, Math.round(preset.titleStyle.fontSize * scale))),
+      color: preset.photo || wasPhoto ? preset.titleStyle.color : current?.titleStyle.color ?? preset.titleStyle.color,
     },
     bodyStyle: {
       ...preset.bodyStyle,
-      color: current?.bodyStyle.color ?? preset.bodyStyle.color,
+      fontSize: Math.max(12, Math.min(2000, Math.round(preset.bodyStyle.fontSize * scale))),
+      color: preset.photo || wasPhoto ? preset.bodyStyle.color : current?.bodyStyle.color ?? preset.bodyStyle.color,
     },
     titlePosition: preset.titlePosition,
     bodyPosition: preset.bodyPosition,
+    ...(preset.photo ? {
+      backgroundColor: preset.photo.paper,
+      signatureFontId: preset.bodyStyle.fontId,
+      signatureColor: preset.photo.signatureColor,
+      signaturePosition: preset.photo.signaturePosition,
+    } : {}),
   }
 }
