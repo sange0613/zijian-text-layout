@@ -94,6 +94,7 @@ export type TextLayoutPreset = {
   bodyStyle: TextStyle
   titlePosition: TextBlockPosition
   bodyPosition: TextBlockPosition
+  textCard?: { headline: string; detail: string; comparison?: true }
   photo?: {
     frame: { x: number; y: number; width: number; height: number }
     paper: string

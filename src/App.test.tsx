@@ -171,6 +171,28 @@ it('applies a pure text layout preset and still allows manual size tweaks', asyn
   expect(screen.getByTestId('preview-canvas')).toHaveAttribute('data-layout', 'number-focus')
 })
 
+it('adds six text-only presets and lays out a comparison without replacing the draft', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+  const body = '方案 A\n二十分钟\n\n方案 B\n十分钟'
+  fireEvent.change(screen.getByLabelText('标题内容'), { target: { value: '怎么选？' } })
+  fireEvent.change(screen.getByLabelText('正文内容'), { target: { value: body } })
+  await user.click(screen.getByRole('button', { name: '纯文字排版' }))
+  for (const label of ['数字清单', '问答封面', '步骤教程', '双栏对比', '避坑提醒', '三行大字报']) {
+    expect(screen.getByRole('button', { name: new RegExp(label) })).toBeVisible()
+  }
+  await user.click(screen.getByRole('button', { name: /双栏对比/ }))
+  const previewBody = screen.getByTestId('preview-body')
+  expect(previewBody).toHaveClass('text-card-comparison')
+  expect(Array.from(previewBody.children, (element) => element.textContent)).toEqual(['方案 A\n二十分钟', '方案 B\n十分钟'])
+  expect(screen.getByTestId('preview-title')).toHaveTextContent('怎么选？')
+  expect(screen.getByLabelText('正文内容')).toHaveValue(body)
+  expect(screen.queryByTestId('preview-image-frame')).toBeNull()
+  fireEvent.change(screen.getByLabelText('正文内容'), { target: { value: '一个段落' } })
+  expect(previewBody).not.toHaveClass('text-card-comparison')
+  expect(previewBody).toHaveTextContent('一个段落')
+})
+
 it('applies a photo composition, keeps the uploaded image and allows independent typography adjustments', async () => {
   const user = userEvent.setup()
   render(<App />)

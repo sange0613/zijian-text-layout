@@ -10,7 +10,7 @@ import {
 import { getCanvasSize } from '../canvas/getCanvasSize'
 import { getOverflowLabels } from '../canvas/getOverflowLabels'
 import { FONT_BY_ID } from '../data/presets'
-import { TEXT_LAYOUT_BY_ID } from '../data/textLayoutPresets'
+import { splitComparison, TEXT_LAYOUT_BY_ID } from '../data/textLayoutPresets'
 import { useCanvasDrag, type DragTarget } from '../hooks/useCanvasDrag'
 import type { BackgroundImageValue, EditorState, SignaturePosition, TextBlockPosition } from '../types'
 
@@ -49,7 +49,10 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
   const titleFont = FONT_BY_ID.get(state.titleStyle.fontId)!
   const bodyFont = FONT_BY_ID.get(state.bodyStyle.fontId)!
   const signatureFont = FONT_BY_ID.get(state.signatureFontId)!
-  const photo = TEXT_LAYOUT_BY_ID.get(state.textLayoutId)?.photo
+  const preset = TEXT_LAYOUT_BY_ID.get(state.textLayoutId)
+  const photo = preset?.photo
+  const usesTextControls = photo || preset?.textCard
+  const columns = preset?.textCard?.comparison ? splitComparison(state.body) : null
   const { drag, props: dragProps } = useCanvasDrag(onMoveText)
   const displayScale = compact ? Math.min(140 / size.width, 195 / size.height) : scale
   const titlePosition = drag?.target.type === 'title' ? drag.position : state.titlePosition
@@ -166,7 +169,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
                   fontFamily: `'${titleFont.family}', ${titleFont.fallback}`,
                   fontSize: state.titleStyle.fontSize,
                   fontWeight: state.titleStyle.fontWeight,
-                  ...(photo ? { width: `${state.titleStyle.widthPercent ?? 82}%`, maxWidth: 'none', textAlign: state.titleStyle.textAlign ?? 'left', lineHeight: state.titleStyle.lineHeight ?? 1.45, margin: 0 } : {}),
+                  ...(usesTextControls ? { width: `${state.titleStyle.widthPercent ?? 82}%`, maxWidth: 'none', textAlign: state.titleStyle.textAlign ?? 'left', lineHeight: state.titleStyle.lineHeight ?? 1.45, margin: 0 } : {}),
                 }}
               >
                 {state.title}
@@ -176,6 +179,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
               <p
                 data-testid="preview-body"
                 data-overflow-label="正文"
+                className={columns ? 'text-card-comparison' : undefined}
                 {...dragProps({ type: 'body' }, state.bodyPosition)}
                 style={{
                   left: `${bodyPosition.x}%`,
@@ -184,10 +188,10 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
                   fontFamily: `'${bodyFont.family}', ${bodyFont.fallback}`,
                   fontSize: state.bodyStyle.fontSize,
                   fontWeight: state.bodyStyle.fontWeight,
-                  ...(photo ? { width: `${state.bodyStyle.widthPercent ?? 80}%`, maxWidth: 'none', textAlign: state.bodyStyle.textAlign ?? 'left', lineHeight: state.bodyStyle.lineHeight ?? 1.6, margin: 0 } : {}),
+                  ...(usesTextControls ? { width: `${state.bodyStyle.widthPercent ?? 80}%`, maxWidth: 'none', textAlign: state.bodyStyle.textAlign ?? 'left', lineHeight: state.bodyStyle.lineHeight ?? 1.6, margin: 0 } : {}),
                 }}
               >
-                {state.body}
+                {columns ? <><span>{columns[0]}</span><span>{columns[1]}</span></> : state.body}
               </p>
             ) : null}
           </div>

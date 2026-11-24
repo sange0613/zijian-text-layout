@@ -1,6 +1,42 @@
-import type { EditorState, TextLayoutPreset } from '../types'
+import type { EditorState, TextLayoutPreset, TextStyle } from '../types'
 import { PHOTO_LAYOUT_PRESETS } from './photoLayoutPresets'
 import { getCanvasSize } from '../canvas/getCanvasSize'
+
+const card = (
+  id: string,
+  label: string,
+  rule: string,
+  textCard: NonNullable<TextLayoutPreset['textCard']>,
+  title: [font: string, size: number, x: number, y: number, width: number, align: NonNullable<TextStyle['textAlign']>],
+  body: [size: number, x: number, y: number, width: number, align: NonNullable<TextStyle['textAlign']>, leading: number],
+): TextLayoutPreset => ({
+  id: `xhs-${id}`, label, rule, textCard,
+  titlePosition: { x: title[2], y: title[3] },
+  bodyPosition: { x: body[1], y: body[2] },
+  titleStyle: { fontId: title[0], fontSize: title[1], fontWeight: 800, color: '#171717', widthPercent: title[4], textAlign: title[5], lineHeight: 1.2 },
+  bodyStyle: { fontId: 'source-sans', fontSize: body[0], fontWeight: 400, color: '#4B4B4B', widthPercent: body[3], textAlign: body[4], lineHeight: body[5] },
+})
+
+export const XHS_TEXT_LAYOUT_PRESETS = [
+  card('number-list', '数字清单', '标题先写数量，正文每行一项',
+    { headline: '5 件必带小物', detail: '01 充电线\n02 收纳袋\n03 水杯' },
+    ['source-sans', 116, 50, 28, 78, 'left'], [44, 50, 58, 78, 'left', 1.9]),
+  card('question-answer', '问答封面', '大字提问，下方短句点出答案',
+    { headline: '新手怎么入门？', detail: '先做好这一步' },
+    ['smiley', 104, 50, 41, 76, 'center'], [37, 50, 65, 70, 'center', 1.65]),
+  card('step-guide', '步骤教程', '页眉点题，下方逐行写 ① ② ③',
+    { headline: '三步整理桌面', detail: '① 清空\n② 归类\n③ 复位' },
+    ['source-sans', 80, 50, 20, 80, 'left'], [47, 53, 52, 74, 'left', 2.1]),
+  card('comparison', '双栏对比', '正文用空行隔开两组，自动左右分栏',
+    { headline: '这两种怎么选', detail: '方案 A\n更省时\n\n方案 B\n更省钱', comparison: true },
+    ['source-sans', 83, 50, 26, 84, 'center'], [40, 50, 57, 84, 'left', 1.6]),
+  card('pitfalls', '避坑提醒', '醒目的结论放上方，下方补原因',
+    { headline: '这三件别急买', detail: '下单前先检查尺寸和使用频率' },
+    ['smiley', 112, 47, 35, 70, 'left'], [36, 57, 68, 65, 'right', 1.75]),
+  card('bold-note', '三行大字报', '标题可手动分三行，正文收在底部',
+    { headline: '给自己\n留一点\n空白', detail: '一份简单的生活笔记' },
+    ['smiley', 152, 50, 43, 86, 'center'], [32, 50, 81, 76, 'center', 1.65]),
+]
 
 export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
   {
@@ -196,7 +232,7 @@ export const TEXT_LAYOUT_PRESETS: TextLayoutPreset[] = [
 ]
 
 export const TEXT_LAYOUT_BY_ID = new Map(
-  [...TEXT_LAYOUT_PRESETS, ...PHOTO_LAYOUT_PRESETS].map((preset) => [preset.id, preset]),
+  [...TEXT_LAYOUT_PRESETS, ...XHS_TEXT_LAYOUT_PRESETS, ...PHOTO_LAYOUT_PRESETS].map((preset) => [preset.id, preset]),
 )
 
 export const DEFAULT_TEXT_LAYOUT_ID = TEXT_LAYOUT_PRESETS[0].id
@@ -208,7 +244,7 @@ export function createTextLayoutPatch(
   const preset = TEXT_LAYOUT_BY_ID.get(presetId) ?? TEXT_LAYOUT_PRESETS[0]
   const size = current ? getCanvasSize(current) : undefined
   const wasPhoto = current ? Boolean(TEXT_LAYOUT_BY_ID.get(current.textLayoutId)?.photo) : false
-  const scale = preset.photo && size ? Math.min(size.width / 1242, size.height / 1656) : 1
+  const scale = (preset.photo || preset.textCard) && size ? Math.min(size.width / 1242, size.height / 1656) : 1
   return {
     textLayoutId: preset.id,
     titleStyle: {
@@ -231,4 +267,12 @@ export function createTextLayoutPatch(
       signaturePosition: preset.photo.signaturePosition,
     } : {}),
   }
+}
+
+export function splitComparison(text: string): [string, string] | null {
+  const separator = /\r?\n[ \t]*\r?\n/.exec(text)
+  if (!separator) return null
+  const left = text.slice(0, separator.index).trim()
+  const right = text.slice(separator.index + separator[0].length).trim()
+  return left && right ? [left, right] : null
 }
