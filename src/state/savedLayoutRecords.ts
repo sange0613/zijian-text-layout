@@ -1,5 +1,6 @@
 import { DEFAULT_EDITOR_STATE, parseStoredState } from './editorState'
-import type { EditorState, SavedLayoutRecord } from '../types'
+import type { BackgroundImageValue, EditorState, SavedLayoutRecord } from '../types'
+import { readTemplatePhoto } from '../background/saveTemplatePhoto'
 
 export const SAVED_LAYOUT_RECORDS_KEY = 'zijian-saved-layout-records-v1'
 export const MAX_SAVED_LAYOUT_RECORDS = 20
@@ -27,12 +28,15 @@ export function importSavedLayoutRecords(raw: string, current: SavedLayoutRecord
     if (state === DEFAULT_EDITOR_STATE) {
       throw new Error('记录中的排版数据无效，未导入任何内容')
     }
+    const photo = readTemplatePhoto(record.photo)
+    if (record.photo !== undefined && !photo) throw new Error('记录中的照片无效或超出大小限制')
     return {
       id: record.id,
       name: normalizeRecordName(record.name),
       savedAt: record.savedAt,
       favorite: record.favorite === true,
       state,
+      ...(photo ? { photo } : {}),
     }
   })
   const ids = new Set(current.map((record) => record.id))
@@ -67,11 +71,11 @@ export function parseSavedLayoutRecords(raw: string | null, limit = MAX_SAVED_LA
     if (!Array.isArray(value)) return []
     return value
       .filter(isRecordShape)
-      .map((record) => ({
-        ...record,
-        favorite: record.favorite === true,
-        state: parseStoredState(JSON.stringify(record.state)),
-      }))
+      .map(({ photo: rawPhoto, ...record }) => {
+        const photo = readTemplatePhoto(rawPhoto)
+        return { ...record, favorite: record.favorite === true,
+          state: parseStoredState(JSON.stringify(record.state)), ...(photo ? { photo } : {}) }
+      })
       .slice(0, limit)
   } catch {
     return []
@@ -91,6 +95,7 @@ export function normalizeRecordName(name: string) {
 export function createSavedLayoutRecord(
   state: EditorState,
   customName = '',
+  photo?: BackgroundImageValue,
 ): SavedLayoutRecord {
   const savedAt = Date.now()
   return {
@@ -99,5 +104,6 @@ export function createSavedLayoutRecord(
     savedAt,
     favorite: false,
     state: JSON.parse(JSON.stringify(state)) as EditorState,
+    ...(photo ? { photo } : {}),
   }
 }

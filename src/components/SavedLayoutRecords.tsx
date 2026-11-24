@@ -1,18 +1,19 @@
 import { useMemo, useRef, useState } from 'react'
 import { TEXT_LAYOUT_BY_ID } from '../data/textLayoutPresets'
-import type { EditorState, SavedLayoutRecord } from '../types'
+import type { SavedLayoutRecord } from '../types'
 
 type SavedLayoutRecordsProps = {
   records: SavedLayoutRecord[]
   recordName: string
   justSaved: boolean
   onRecordNameChange: (name: string) => void
-  onSave: () => void
+  canSavePhoto: boolean
+  onSave: (includePhoto: boolean) => Promise<void>
   onExport: () => void
   onImport: (raw: string) => { imported: number; skipped: number }
   onRename: (id: string, name: string) => void
   onToggleFavorite: (id: string) => void
-  onApply: (state: EditorState) => void
+  onApply: (record: SavedLayoutRecord) => void
   onRemove: (id: string) => void
 }
 
@@ -20,6 +21,7 @@ export function SavedLayoutRecords({
   records,
   recordName,
   justSaved,
+  canSavePhoto,
   onRecordNameChange,
   onSave,
   onExport,
@@ -34,6 +36,21 @@ export function SavedLayoutRecords({
   const [importStatus, setImportStatus] = useState('')
   const [importError, setImportError] = useState(false)
   const [importing, setImporting] = useState(false)
+  const [includePhoto, setIncludePhoto] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
+
+  async function handleSave() {
+    setSaving(true)
+    setSaveError('')
+    try {
+      await onSave(canSavePhoto && includePhoto)
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : '保存失败，请重试')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   const handleImport = async (file: File) => {
     setImporting(true)
@@ -126,14 +143,17 @@ export function SavedLayoutRecords({
           className="save-record-button"
           type="button"
           aria-label="保存当前记录"
-          onClick={onSave}
+          disabled={saving}
+          onClick={handleSave}
         >
-          保存
+          {saving ? '保存中' : '保存'}
         </button>
       </div>
       <div className="save-record-status" aria-live="polite">
-        {justSaved ? '已保存' : ''}
+        {justSaved && !saving && !saveError ? '已保存' : ''}
       </div>
+      {canSavePhoto ? <label className="save-photo-option"><input type="checkbox" checked={includePhoto} onChange={(event) => setIncludePhoto(event.target.checked)} />同时保存照片（压缩后随模板同步）</label> : null}
+      {saveError ? <p className="import-record-status import-record-status--error" role="alert">{saveError}</p> : null}
       {records.length ? (
         <>
           <label className="saved-record-search">
@@ -163,6 +183,7 @@ export function SavedLayoutRecords({
                     />
                     <span>
                       {TEXT_LAYOUT_BY_ID.get(record.state.textLayoutId)?.label ?? '自定义排版'}
+                      {record.photo ? ' · 含照片' : ''}
                     </span>
                   </div>
                   <button
@@ -179,7 +200,7 @@ export function SavedLayoutRecords({
                     className="saved-record-apply"
                     type="button"
                     aria-label={`使用记录：${record.name}`}
-                    onClick={() => onApply(record.state)}
+                    onClick={() => onApply(record)}
                   >
                     用
                   </button>

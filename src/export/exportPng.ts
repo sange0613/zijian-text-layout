@@ -37,12 +37,21 @@ export async function exportPng(
   options: ExportOptions,
   dependencies?: Partial<ExportDependencies>,
 ) {
-  const render = dependencies?.render ?? toPng
   const download = dependencies?.download ?? downloadDataUrl
+  const dataUrl = await renderPng(node, options, dependencies)
+  download(dataUrl, `字间-${options.name}-${timestamp()}.png`)
+}
+
+export async function renderPng(
+  node: HTMLElement,
+  options: Pick<ExportOptions, 'width' | 'height'> & { fontEmbedCSS?: string },
+  dependencies?: Partial<ExportDependencies>,
+) {
+  const render = dependencies?.render ?? toPng
   const fontsReady = dependencies?.fontsReady ?? document.fonts?.ready ?? Promise.resolve()
 
   await fontsReady
-  const dataUrl = await render(node, {
+  return render(node, {
     width: options.width,
     height: options.height,
     canvasWidth: options.width,
@@ -50,6 +59,7 @@ export async function exportPng(
     pixelRatio: 1,
     cacheBust: false,
     skipAutoScale: true,
+    fontEmbedCSS: options.fontEmbedCSS,
     style: {
       width: `${options.width}px`,
       height: `${options.height}px`,
@@ -57,5 +67,4 @@ export async function exportPng(
       transformOrigin: 'top left',
     },
   })
-  download(dataUrl, `字间-${options.name}-${timestamp()}.png`)
 }

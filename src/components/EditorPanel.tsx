@@ -30,12 +30,12 @@ type EditorPanelProps = {
   ) => void
   onRemoveCustomText: (id: string) => void
   onRecordNameChange: (name: string) => void
-  onSaveRecord: () => void
+  onSaveRecord: (includePhoto: boolean) => Promise<void>
   onExportRecords: () => void
   onImportRecords: (raw: string) => { imported: number; skipped: number }
   onRenameRecord: (id: string, name: string) => void
   onToggleFavoriteRecord: (id: string) => void
-  onApplyRecord: (state: EditorState) => void
+  onApplyRecord: (record: SavedLayoutRecord) => void
   onRemoveRecord: (id: string) => void
 }
 
@@ -151,7 +151,7 @@ export function EditorPanel({
             </label>
             <SignaturePositionPicker
               value={state.signaturePosition}
-              onChange={(signaturePosition) => onChange({ signaturePosition })}
+              onChange={(signaturePosition) => onChange({ signaturePosition, signatureOffset: null })}
             />
           </div>
           <div className="signature-size-control">
@@ -240,6 +240,7 @@ export function EditorPanel({
           records={savedRecords}
           recordName={recordName}
           justSaved={justSaved}
+          canSavePhoto={Boolean(backgroundImage)}
           onRecordNameChange={onRecordNameChange}
           onSave={onSaveRecord}
           onExport={onExportRecords}

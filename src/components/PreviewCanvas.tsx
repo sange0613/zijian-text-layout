@@ -5,16 +5,21 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from 'react'
 import { getCanvasSize } from '../canvas/getCanvasSize'
 import { getOverflowLabels } from '../canvas/getOverflowLabels'
 import { FONT_BY_ID } from '../data/presets'
 import { TEXT_LAYOUT_BY_ID } from '../data/textLayoutPresets'
-import type { BackgroundImageValue, EditorState, SignaturePosition } from '../types'
+import { useCanvasDrag, type DragTarget } from '../hooks/useCanvasDrag'
+import type { BackgroundImageValue, EditorState, SignaturePosition, TextBlockPosition } from '../types'
 
 type PreviewCanvasProps = {
   state: EditorState
   backgroundImage: BackgroundImageValue | null
+  compact?: boolean
+  actions?: ReactNode
+  onMoveText?: (target: DragTarget, position: TextBlockPosition) => void
 }
 
 function getSignaturePositionStyle(position: SignaturePosition): CSSProperties {
@@ -33,7 +38,7 @@ function getSignaturePositionStyle(position: SignaturePosition): CSSProperties {
 }
 
 export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(function PreviewCanvas(
-  { state, backgroundImage },
+  { state, backgroundImage, compact = false, actions, onMoveText },
   forwardedRef,
 ) {
   const stageRef = useRef<HTMLDivElement>(null)
@@ -45,12 +50,17 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
   const bodyFont = FONT_BY_ID.get(state.bodyStyle.fontId)!
   const signatureFont = FONT_BY_ID.get(state.signatureFontId)!
   const photo = TEXT_LAYOUT_BY_ID.get(state.textLayoutId)?.photo
+  const { drag, props: dragProps } = useCanvasDrag(onMoveText)
+  const displayScale = compact ? Math.min(140 / size.width, 195 / size.height) : scale
+  const titlePosition = drag?.target.type === 'title' ? drag.position : state.titlePosition
+  const bodyPosition = drag?.target.type === 'body' ? drag.position : state.bodyPosition
+  const signatureOffset = drag?.target.type === 'signature' ? drag.position : state.signatureOffset
 
   useImperativeHandle(forwardedRef, () => canvasRef.current as HTMLDivElement)
 
   useEffect(() => {
     const stage = stageRef.current
-    if (!stage || typeof ResizeObserver === 'undefined') return
+    if (compact || !stage || typeof ResizeObserver === 'undefined') return
     const updateScale = () => {
       const horizontal = Math.max(stage.clientWidth - 64, 240) / size.width
       const vertical = Math.max(stage.clientHeight - 64, 280) / size.height
@@ -60,11 +70,11 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
     const observer = new ResizeObserver(updateScale)
     observer.observe(stage)
     return () => observer.disconnect()
-  }, [size.height, size.width])
+  }, [compact, size.height, size.width])
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (compact || !canvas) return
     let cancelled = false
     const checkOverflow = () => {
       if (cancelled) return
@@ -87,11 +97,11 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
       cancelAnimationFrame(frame)
       window.removeEventListener('resize', checkOverflow)
     }
-  }, [scale, state])
+  }, [compact, scale, state])
 
   return (
-    <section className="preview-stage" aria-label="排版预览" ref={stageRef}>
-      {photo && !backgroundImage ? <div className="preview-template-hint">上传背景图，即可套用当前构图</div> : null}
+    <section className={compact ? 'preview-stage preview-stage--compact' : 'preview-stage'} aria-label={compact ? '封面缩略预览' : '排版预览'} ref={stageRef}>
+      {!compact && photo && !backgroundImage ? <div className="preview-template-hint">上传背景图，即可套用当前构图</div> : null}
       {overflowLabels.length ? (
         <div className="preview-overflow-warning" role="status">
           <span aria-hidden="true">!</span>
@@ -100,7 +110,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
       ) : null}
       <div
         className="preview-sizer"
-        style={{ width: size.width * scale, height: size.height * scale }}
+        style={{ width: size.width * displayScale, height: size.height * displayScale }}
       >
         <div
           ref={canvasRef}
@@ -113,7 +123,7 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
             width: size.width,
             height: size.height,
             backgroundColor: state.backgroundColor,
-            transform: `scale(${scale})`,
+            transform: `scale(${displayScale})`,
           }}
         >
           {backgroundImage || photo ? (
@@ -148,9 +158,10 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
               <h2
                 data-testid="preview-title"
                 data-overflow-label="标题"
+                {...dragProps({ type: 'title' }, state.titlePosition)}
                 style={{
-                  left: `${state.titlePosition.x}%`,
-                  top: `${state.titlePosition.y}%`,
+                  left: `${titlePosition.x}%`,
+                  top: `${titlePosition.y}%`,
                   color: state.titleStyle.color,
                   fontFamily: `'${titleFont.family}', ${titleFont.fallback}`,
                   fontSize: state.titleStyle.fontSize,
@@ -165,9 +176,10 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
               <p
                 data-testid="preview-body"
                 data-overflow-label="正文"
+                {...dragProps({ type: 'body' }, state.bodyPosition)}
                 style={{
-                  left: `${state.bodyPosition.x}%`,
-                  top: `${state.bodyPosition.y}%`,
+                  left: `${bodyPosition.x}%`,
+                  top: `${bodyPosition.y}%`,
                   color: state.bodyStyle.color,
                   fontFamily: `'${bodyFont.family}', ${bodyFont.fallback}`,
                   fontSize: state.bodyStyle.fontSize,
@@ -184,8 +196,10 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
               className="preview-signature"
               data-testid="preview-signature"
               data-overflow-label="署名"
+              {...dragProps({ type: 'signature' }, state.signatureOffset)}
               style={{
                 ...getSignaturePositionStyle(state.signaturePosition),
+                ...(signatureOffset ? { left: `${signatureOffset.x}%`, top: `${signatureOffset.y}%`, right: 'auto', bottom: 'auto', width: 'max-content', maxWidth: '78%', transform: 'translate(-50%, -50%)' } : {}),
                 color: state.signatureColor,
                 fontFamily: `'${signatureFont.family}', ${signatureFont.fallback}`,
                 fontSize: state.signatureFontSize,
@@ -197,15 +211,17 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
           ) : null}
           {state.customTextBlocks.map((block) => {
             const font = FONT_BY_ID.get(block.fontId)!
+            const position = drag?.target.type === 'custom' && drag.target.id === block.id ? drag.position : block.position
             return block.text ? (
               <div
                 key={block.id}
                 className="preview-custom-text"
                 data-testid={`preview-custom-text-${block.id}`}
                 data-overflow-label="自定义文字"
+                {...dragProps({ type: 'custom', id: block.id }, block.position)}
                 style={{
-                  left: `${block.position.x}%`,
-                  top: `${block.position.y}%`,
+                  left: `${position.x}%`,
+                  top: `${position.y}%`,
                   color: block.color,
                   fontFamily: `'${font.family}', ${font.fallback}`,
                   fontSize: block.fontSize,
@@ -217,10 +233,13 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(func
             ) : null
           })}
         </div>
+        {drag?.position.x === 50 ? <span className="preview-snap-guide preview-snap-guide--vertical" /> : null}
+        {drag?.position.y === 50 ? <span className="preview-snap-guide preview-snap-guide--horizontal" /> : null}
       </div>
-      <div className="preview-meta" aria-hidden="true">
-        {size.label} · {size.detail}
-      </div>
+      {!compact ? <div className="preview-meta">
+        <span>{size.label} · {size.detail}</span>
+        {actions ? <div className="preview-actions">{actions}</div> : null}
+      </div> : null}
     </section>
   )
 })

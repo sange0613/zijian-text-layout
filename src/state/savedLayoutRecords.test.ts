@@ -23,6 +23,14 @@ it('rejects malformed files and corrupt states without replacing existing record
   expect(() => importSavedLayoutRecords(JSON.stringify({ app: 'other', records: [record] }), [])).toThrow('无法识别')
 })
 
+it('restores embedded photos and their crop, while rejecting nonportable image URLs', () => {
+  const photo = { url: 'data:image/jpeg;base64,aGVsbG8=', name: '封面.jpg', positionX: 18, positionY: 72, opacity: 70, blur: 4 }
+  const record = createSavedLayoutRecord({ ...DEFAULT_EDITOR_STATE, signatureOffset: { x: 23, y: 84 } }, '带图模板', photo)
+  const [restored] = importSavedLayoutRecords(JSON.stringify([record]), []).records
+  expect(restored).toEqual(record)
+  expect(() => importSavedLayoutRecords(JSON.stringify([{ ...record, photo: { ...photo, url: 'https://example.com/photo.jpg' } }]), [])).toThrow('照片无效')
+})
+
 it('refuses to discard existing records when an import exceeds capacity', () => {
   const current = Array.from({ length: 20 }, (_, index) => ({
     ...createSavedLayoutRecord(DEFAULT_EDITOR_STATE), id: `existing-${index}`,

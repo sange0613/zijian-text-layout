@@ -37,6 +37,7 @@ export type EditorState = {
   signature: string
   textLayoutId: string
   signaturePosition: SignaturePosition
+  signatureOffset?: TextBlockPosition | null
   signatureFontId: string
   signatureFontSize: number
   signatureColor: string
@@ -57,6 +58,7 @@ export type SavedLayoutRecord = {
   savedAt: number
   favorite: boolean
   state: EditorState
+  photo?: BackgroundImageValue
 }
 
 export type SizePreset = {

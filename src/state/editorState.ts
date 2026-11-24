@@ -132,6 +132,7 @@ function isEditorState(value: unknown): value is EditorState {
     typeof state.textLayoutId === 'string' &&
     TEXT_LAYOUT_BY_ID.has(state.textLayoutId) &&
     isSignaturePosition(state.signaturePosition) &&
+    (state.signatureOffset == null || isTextBlockPosition(state.signatureOffset)) &&
     typeof state.signatureFontId === 'string' &&
     FONT_BY_ID.has(state.signatureFontId) &&
     typeof state.signatureFontSize === 'number' &&

@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { EditorPanel } from './components/EditorPanel'
 import { ExportButton } from './components/ExportButton'
 import { PreviewCanvas } from './components/PreviewCanvas'
+import { CoverTools } from './components/CoverTools'
+import { readTemplatePhoto, saveTemplatePhoto } from './background/saveTemplatePhoto'
+import type { DragTarget } from './hooks/useCanvasDrag'
 import { getCanvasSize } from './canvas/getCanvasSize'
 import { exportPng } from './export/exportPng'
 import { exportSavedLayoutRecords } from './export/exportSavedLayoutRecords'
@@ -13,7 +16,7 @@ import {
   MAX_CUSTOM_TEXT_BLOCKS,
   updateCustomTextBlock,
 } from './state/customTextBlocks'
-import type { CustomTextBlock } from './types'
+import type { CustomTextBlock, TextBlockPosition } from './types'
 
 export default function App() {
   const { state, update, undo, redo, canUndo, canRedo } = usePersistedEditorState()
@@ -21,6 +24,7 @@ export default function App() {
   const { records, save, rename, remove, toggleFavorite, importRecords } = useSavedLayoutRecords()
   const [recordName, setRecordName] = useState('')
   const [justSaved, setJustSaved] = useState(false)
+  const [coverTool, setCoverTool] = useState<'feed' | 'batch' | null>(null)
   const [selectedCustomTextId, setSelectedCustomTextId] = useState<string | null>(null)
   const previewRef = useRef<HTMLDivElement>(null)
   const hasCustomText = state.customTextBlocks.some((block) => block.text.trim())
@@ -50,8 +54,11 @@ export default function App() {
     })
   }
 
-  const handleSaveRecord = () => {
-    save(state, recordName)
+  const handleSaveRecord = async (includePhoto: boolean) => {
+    const photo = includePhoto && backgroundImage
+      ? readTemplatePhoto(backgroundImage) ?? await saveTemplatePhoto(backgroundImage)
+      : undefined
+    save(state, recordName, photo)
     setRecordName('')
     setJustSaved(true)
   }
@@ -74,6 +81,17 @@ export default function App() {
     const next = state.customTextBlocks.filter((block) => block.id !== id)
     update({ customTextBlocks: next })
     if (selectedCustomTextId === id) setSelectedCustomTextId(next[0]?.id ?? null)
+  }
+
+  const moveText = (target: DragTarget, position: TextBlockPosition) => {
+    switch (target.type) {
+      case 'title': update({ titlePosition: position }); break
+      case 'body': update({ bodyPosition: position }); break
+      case 'signature': update({ signatureOffset: position }); break
+      case 'custom':
+        setSelectedCustomTextId(target.id)
+        handleUpdateCustomText(target.id, { position })
+    }
   }
 
   return (
@@ -128,15 +146,22 @@ export default function App() {
           onImportRecords={importRecords}
           onRenameRecord={rename}
           onToggleFavoriteRecord={toggleFavorite}
-          onApplyRecord={(savedState) => {
-            update(savedState)
-            setSelectedCustomTextId(savedState.customTextBlocks[0]?.id ?? null)
+          onApplyRecord={(record) => {
+            update({ ...record.state, signatureOffset: record.state.signatureOffset ?? null })
+            if (record.photo) setBackgroundImage(record.photo)
+            setSelectedCustomTextId(record.state.customTextBlocks[0]?.id ?? null)
             setJustSaved(false)
           }}
           onRemoveRecord={remove}
         />
-        <PreviewCanvas ref={previewRef} state={state} backgroundImage={backgroundImage} />
+        <PreviewCanvas ref={previewRef} state={state} backgroundImage={backgroundImage} onMoveText={moveText}
+          actions={<>
+            <button type="button" onClick={() => setCoverTool('feed')}>缩略预览</button>
+            <button type="button" onClick={() => setCoverTool('batch')}>批量出图</button>
+          </>}
+        />
       </main>
+      {coverTool ? <CoverTools mode={coverTool} state={state} backgroundImage={backgroundImage} onClose={() => setCoverTool(null)} /> : null}
     </div>
   )
 }

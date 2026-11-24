@@ -539,6 +539,10 @@ button:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
+.font-size-entry { display: flex; align-items: center; gap: 3px; color: var(--muted); }
+.font-size-entry input[type='number'] { width: 100%; min-width: 0; height: 26px; padding: 0 4px; text-align: right; font-size: 11px; appearance: textfield; }
+.font-size-entry input::-webkit-inner-spin-button { appearance: none; }
+
 .font-size-slider input[type='range'] {
   width: 100%;
   height: 18px;
@@ -1537,6 +1541,37 @@ button:focus-visible {
   font-variant-numeric: tabular-nums;
   letter-spacing: .04em;
 }
+
+.preview-stage .preview-meta { bottom: 10px; display: grid; justify-items: center; gap: 5px; }
+.preview-actions, .batch-navigation { display: flex; align-items: center; gap: 8px; }
+.preview-actions button, .cover-tools-heading button, .batch-navigation button {
+  padding: 5px 9px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: #ffffffb0;
+  font-size: 11px;
+  cursor: pointer;
+}
+.preview-canvas [data-draggable-text] { cursor: grab; touch-action: none; user-select: none; pointer-events: auto; }
+.preview-canvas [data-draggable-text]:active { cursor: grabbing; }
+.preview-snap-guide { position: absolute; z-index: 5; pointer-events: none; background: var(--accent); }
+.preview-snap-guide--vertical { left: 50%; inset-block: 0; width: 1px; }
+.preview-snap-guide--horizontal { top: 50%; inset-inline: 0; height: 1px; }
+.save-photo-option { display: flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 11px; color: var(--muted); }
+.cover-tools-dialog { width: min(370px, calc(100vw - 24px)); max-height: 88dvh; padding: 20px; border: 1px solid var(--line); border-radius: 16px; color: var(--ink); background: #fafafc; box-shadow: 0 20px 60px #0003; }
+.cover-tools-dialog::backdrop { background: #15182265; }
+.cover-tools-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.cover-tools-heading h2 { margin: 0; font-size: 16px; }
+.cover-tools-dialog p, .batch-picker { font-size: 12px; color: var(--muted); }
+.cover-tools-dialog [role='alert'] { color: #b42331; overflow-wrap: anywhere; }
+.cover-feed-preview { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 10px; }
+.cover-feed-neighbor { width: min(140px, 100%); aspect-ratio: 3/4; border: 1px solid #dedfe5; border-radius: 5px; background: #e6e7ec; }
+.cover-tools-dialog .preview-stage--compact { display: grid; padding: 0; min-height: 0; overflow: visible; place-items: start center; background: none; box-shadow: none; }
+.preview-stage--compact .preview-sizer { filter: none; }
+.batch-picker { display: grid; gap: 7px; margin-bottom: 14px; }
+.batch-navigation { justify-content: space-between; margin: 14px 0; font-size: 11px; }
+.batch-navigation span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.batch-navigation button { flex: none; }
 
 .preview-overflow-warning {
   position: absolute;

@@ -12,7 +12,7 @@ export function useSessionBackgroundImage(
   const setBackgroundImage = useCallback(
     (next: BackgroundImageValue | null) => {
       const current = backgroundImageRef.current
-      if (current && current.url !== next?.url) revokeObjectURL(current.url)
+      if (current?.url.startsWith('blob:') && current.url !== next?.url) revokeObjectURL(current.url)
       backgroundImageRef.current = next
       setBackgroundImageState(next)
     },
@@ -21,7 +21,7 @@ export function useSessionBackgroundImage(
 
   useEffect(
     () => () => {
-      if (backgroundImageRef.current) revokeObjectURL(backgroundImageRef.current.url)
+      if (backgroundImageRef.current?.url.startsWith('blob:')) revokeObjectURL(backgroundImageRef.current.url)
     },
     [revokeObjectURL],
   )

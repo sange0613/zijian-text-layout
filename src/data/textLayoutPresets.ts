@@ -224,6 +224,7 @@ export function createTextLayoutPatch(
     titlePosition: preset.titlePosition,
     bodyPosition: preset.bodyPosition,
     ...(preset.photo ? {
+      signatureOffset: null,
       backgroundColor: preset.photo.paper,
       signatureFontId: preset.bodyStyle.fontId,
       signatureColor: preset.photo.signatureColor,
