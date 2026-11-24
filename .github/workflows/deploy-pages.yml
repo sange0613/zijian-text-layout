@@ -18,6 +18,7 @@ jobs:
   build:
     permissions:
       contents: read
+      pages: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
